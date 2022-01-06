@@ -103,6 +103,7 @@ class GuestController extends Controller
     }
     public function reservemenu(Request $data)
     {
+        dd($data->all());
         // kode reservasi
         $reservation_code = $data->id;
         // data pesanan

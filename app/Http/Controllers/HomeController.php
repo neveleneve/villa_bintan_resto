@@ -151,7 +151,7 @@ class HomeController extends Controller
         $id = DB::select("SHOW TABLE STATUS LIKE 'menus'");
         $next_id = $id[0]->Auto_increment;
         echo $next_id;
-        dump($data->all());
+        dd($data->all());
         // Menu::insert([
         //     'id_category' => $data->cat,
         //     'name' => $data->name,
