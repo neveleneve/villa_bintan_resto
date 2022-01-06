@@ -11,6 +11,7 @@ use App\ReservedMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\File;
 
 class HomeController extends Controller
 {
@@ -150,18 +151,25 @@ class HomeController extends Controller
     {
         $id = DB::select("SHOW TABLE STATUS LIKE 'menus'");
         $next_id = $id[0]->Auto_increment;
-        echo $next_id;
-        dd($data->all());
-        // Menu::insert([
-        //     'id_category' => $data->cat,
-        //     'name' => $data->name,
-        //     'price' => $data->price,
-        //     'description' => $data->desc,
-        //     'created_at' => date('Y-m-d H:i:s'),
-        //     'updated_at' => date('Y-m-d H:i:s'),
-        //     'deleted_at' => null
-        // ]);
-        // return redirect(route('adminmenus'));
+        // echo $next_id;
+        // echo '<br>';
+        // echo $data->image;
+        // dd($data->all());
+        if (isset($data->image)) {
+            $img = $data->file('image');
+            $dest = public_path('/images/menu');
+            $img->move($dest, $next_id . '.jpg');
+        }
+        Menu::insert([
+            'id_category' => $data->cat,
+            'name' => $data->name,
+            'price' => $data->price,
+            'description' => $data->desc,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'deleted_at' => null
+        ]);
+        return redirect(route('adminmenus'));
     }
     public function menudelete($id)
     {

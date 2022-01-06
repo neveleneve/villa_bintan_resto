@@ -48,47 +48,47 @@ Menus | Administrator
                         </thead>
                         <tbody id="tablemenu">
                             @forelse($menu as $item)
-                                <tr>
-                                    <td class="align-middle">
-                                        <div class="media align-items-center">
-                                            <a class="avatar mr-3">
-                                                @if(File::exists(public_path('images/menu/' . $item->id . '.jpg')))
-                                                    <img src="{{ asset('images/menu/' . $item->id . '.jpg') }}">
-                                                @else
-                                                    <img src="{{ asset('images/menu/default.jpg') }}">
-                                                @endif
-                                            </a>
-                                            <div class="media-body">
-                                                <span class="name mb-0 text-sm">{{ ucwords(strtolower($item->name)) }}</span>
-                                            </div>
+                            <tr>
+                                <td class="align-middle">
+                                    <div class="media align-items-center">
+                                        <a class="avatar mr-3">
+                                            @if(File::exists(public_path('images/menu/' . $item->id . '.jpg')))
+                                            <img src="{{ asset('images/menu/' . $item->id . '.jpg') }}">
+                                            @else
+                                            <img src="{{ asset('images/default.jpg') }}">
+                                            @endif
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="name mb-0 text-sm">{{ ucwords(strtolower($item->name)) }}</span>
                                         </div>
-                                    </td>
-                                    <td class="align-middle">{{ ucfirst(strtolower($item->description)) }}</td>
-                                    <td class="align-middle">{{ ucfirst(strtolower($item->category_name)) }}</td>
-                                    <td class="align-middle">{{ number_format($item->price, 0, ',', '.') }} <strong>IDR</strong></td>
-                                    <td class="align-middle">
-                                        @if($item->deleted_at == null)
-                                            <i class="fas fa-check" title="Available"></i>
-                                        @else
-                                            <i class="fas fa-times" title="Not Available"></i>
-                                        @endif
-                                    </td>
-                                    <td class="align-middle">
-                                        <input type="hidden" name="id_menu" value="{{ $item->id }}">
-                                        <button type="button" class="btn btn-sm btn-outline-default" type="button" onclick="getMenuData({{ $item->id }})" data-toggle="modal" data-target="#modalViewMenu">View</button>
-                                        @if($item->deleted_at == null)
-                                            <a href="{{ route('adminmenudelete', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this menu?')">Delete</a>
-                                        @else
-                                            <a href="{{ route('adminmenurestore', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-primary" onclick="return confirm('Restore this menu?')">Restore</a>
-                                        @endif
-                                    </td>
-                                </tr>
+                                    </div>
+                                </td>
+                                <td class="align-middle">{{ ucfirst(strtolower($item->description)) }}</td>
+                                <td class="align-middle">{{ ucfirst(strtolower($item->category_name)) }}</td>
+                                <td class="align-middle">{{ number_format($item->price, 0, ',', '.') }} <strong>IDR</strong></td>
+                                <td class="align-middle">
+                                    @if($item->deleted_at == null)
+                                    <i class="fas fa-check" title="Available"></i>
+                                    @else
+                                    <i class="fas fa-times" title="Not Available"></i>
+                                    @endif
+                                </td>
+                                <td class="align-middle">
+                                    <input type="hidden" name="id_menu" value="{{ $item->id }}">
+                                    <button type="button" class="btn btn-sm btn-outline-default" type="button" onclick="getMenuData({{ $item->id }})" data-toggle="modal" data-target="#modalViewMenu">View</button>
+                                    @if($item->deleted_at == null)
+                                    <a href="{{ route('adminmenudelete', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this menu?')">Delete</a>
+                                    @else
+                                    <a href="{{ route('adminmenurestore', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-primary" onclick="return confirm('Restore this menu?')">Restore</a>
+                                    @endif
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="6">
-                                        <h1 class="text-center">Data Menu Kosong</h1>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <h1 class="text-center">Data Menu Kosong</h1>
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -123,12 +123,12 @@ Menus | Administrator
                     </label>
                     <select name="viewcat" id="viewcat" class="form-control mb-3" required>
                         @if(count($cat) > 0)
-                            <option value="" selected disabled hidden>Select Menu Category</option>
+                        <option value="" selected disabled hidden>Select Menu Category</option>
                         @else
-                            <option value="" selected disabled>Empty Category</option>
+                        <option value="" selected disabled>Empty Category</option>
                         @endif
                         @foreach($cat as $item)
-                            <option value="{{ $item->id }}">{{ ucfirst($item->name) }}</option>
+                        <option value="{{ $item->id }}">{{ ucfirst($item->name) }}</option>
                         @endforeach
                     </select>
                     <label for="viewprice" class="font-weight-bold h5">
@@ -194,12 +194,12 @@ Menus | Administrator
                     </label>
                     <select name="cat" id="cat" class="form-control mb-3" required>
                         @if(count($cat) > 0)
-                            <option value="" selected disabled hidden>Select Menu Category</option>
+                        <option value="" selected disabled hidden>Select Menu Category</option>
                         @else
-                            <option value="" selected disabled>Empty Category</option>
+                        <option value="" selected disabled>Empty Category</option>
                         @endif
                         @foreach($cat as $item)
-                            <option value="{{ $item->id }}">{{ ucfirst($item->name) }}</option>
+                        <option value="{{ $item->id }}">{{ ucfirst($item->name) }}</option>
                         @endforeach
                     </select>
                     <label for="price" class="font-weight-bold h5">
@@ -232,7 +232,7 @@ Menus | Administrator
     function getMenuData(id) {
         $.ajax({
             type: 'GET',
-            url: '{{ route('adminmenuview') }}',
+            url: '{{ route("adminmenuview") }}',
             data: {
                 'id': id
             },
@@ -242,7 +242,8 @@ Menus | Administrator
                 $('#viewdesc').val(data.desc);
                 $('#viewcat').val(data.cat);
                 $('#viewprice').val(data.price);
-                $("#imagenow").attr("src","{{URL::to('/')}}/images/menu/" + data.id + ".jpg");
+                // make a function to check if image is exist
+                $("#imagenow").attr("src", "{{URL::to('/')}}/images/menu/" + data.id + ".jpg");
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status);
@@ -255,7 +256,7 @@ Menus | Administrator
         // var key = $('#cari').val();
         $.ajax({
             type: 'GET',
-            url: '{{ route('adminmenusearch') }}',
+            url: '{{ route("adminmenusearch") }}',
             data: {
                 'key': key
             },
