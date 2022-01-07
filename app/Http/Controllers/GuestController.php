@@ -103,23 +103,27 @@ class GuestController extends Controller
     }
     public function reservemenu(Request $data)
     {
-        dd($data->all());
         // kode reservasi
         $reservation_code = $data->id;
         // data pesanan
         $datapesan = [];
         // hitung jumlah menu di db
-        $menudb = Menu::count();
-        // hitung jumlah menu yang tampil di web
-        $jumlahmenu = $data->quantity;
-        // hitung jumlah menu yang tampil di web
-        $menu = count($data->quantity);
-        // list data menu yang dipilih pada tampilan web
-        $dataarray = array_filter($data->quantity);
-        // list data menu id
-        $datamenuid = $data->menu_id;
-        // list array key dari menu yang dipilih pada tampilan web
-        $dataarraykey = array_keys($dataarray);
+        $menudb = Menu::get()->count();
+        if (isset($data->quantity)) {
+            // hitung jumlah menu yang tampil di web
+            $jumlahmenu = $data->quantity;
+            // hitung jumlah menu yang tampil di web
+            $menu = count($data->quantity);
+            // list data menu yang dipilih pada tampilan web
+            $dataarray = array_filter($data->quantity);
+            // list data menu id
+            $datamenuid = $data->menu_id;
+            // list array key dari menu yang dipilih pada tampilan web
+            $dataarraykey = array_keys($dataarray);
+        } else {
+        }
+        // dd($data->all());
+        dd($menudb);
         if ($menudb == $menu) {
             for ($i = 0; $i < count($dataarraykey); $i++) {
                 $menudatabase = Menu::where('id', $datamenuid[$dataarraykey[$i]])->get('price');

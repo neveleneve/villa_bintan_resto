@@ -120,7 +120,7 @@ Choose Your Menu
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td colspan="5">
+                                            <td colspan="6">
                                                 <h1 class="text-center">Data Menu Kosong</h1>
                                             </td>
                                         </tr>
