@@ -120,43 +120,41 @@ class GuestController extends Controller
             $datamenuid = $data->menu_id;
             // list array key dari menu yang dipilih pada tampilan web
             $dataarraykey = array_keys($dataarray);
-        } else {
-        }
-        // dd($data->all());
-        dd($menudb);
-        if ($menudb == $menu) {
-            for ($i = 0; $i < count($dataarraykey); $i++) {
-                $menudatabase = Menu::where('id', $datamenuid[$dataarraykey[$i]])->get('price');
-                $datapesan[$i] = [
-                    'reservation_code' => $reservation_code,
-                    'menu_id' => $datamenuid[$dataarraykey[$i]],
-                    'harga' => $menudatabase[0]['price'],
-                    'jumlah' => $jumlahmenu[$dataarraykey[$i]],
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ];
-            }
-            if ($datapesan == null) {
-                $tablefee = 50000;
+            dd($menudb);
+            if ($menudb == $menu) {
+                for ($i = 0; $i < count($dataarraykey); $i++) {
+                    $menudatabase = Menu::where('id', $datamenuid[$dataarraykey[$i]])->get('price');
+                    $datapesan[$i] = [
+                        'reservation_code' => $reservation_code,
+                        'menu_id' => $datamenuid[$dataarraykey[$i]],
+                        'harga' => $menudatabase[0]['price'],
+                        'jumlah' => $jumlahmenu[$dataarraykey[$i]],
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ];
+                }
             } else {
-                $tablefee = 0;
-                ReservedMenu::insert($datapesan);
+                return redirect(route('choosemenu', [
+                    'id' => $data->id
+                ]))->with([
+                    'alert' => 'There is an update on menu. Please re-choose your selected menu!'
+                ]);
             }
-            ReservedFee::create([
-                'reservation_code' => $reservation_code,
-                'fee' => $tablefee,
-            ]);
-            Reservation::where('reservation_code', $reservation_code)->update([
-                'status' => 1
-            ]);
-            return redirect(route('reservationdetail', ['id' => $data->id]));
-        } else {
-            return redirect(route('choosemenu', [
-                'id' => $data->id
-            ]))->with([
-                'alert' => 'There is an update on menu. Please re-choose your selected menu!'
-            ]);
         }
+        if ($datapesan == null) {
+            $tablefee = 50000;
+        } else {
+            $tablefee = 0;
+            ReservedMenu::insert($datapesan);
+        }
+        ReservedFee::create([
+            'reservation_code' => $reservation_code,
+            'fee' => $tablefee,
+        ]);
+        Reservation::where('reservation_code', $reservation_code)->update([
+            'status' => 1
+        ]);
+        return redirect(route('reservationdetail', ['id' => $data->id]));
     }
 
     public function reservationdetails($id)
