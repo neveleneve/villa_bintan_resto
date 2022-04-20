@@ -8,6 +8,7 @@ use App\Table;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\URL;
 
 class AjaxController extends Controller
 {
@@ -19,7 +20,8 @@ class AjaxController extends Controller
             $tabeldata = DB::select("select * from tables 
             where not exists (select * from reservations where (reservations.time = '" . $ajax->tanggal . " " . $ajax->jam . "' and reservations.status > 0) and
             tables.id = reservations.table_id) 
-            and tables.kapasitas >= " . $ajax->jumlah);
+            and tables.kapasitas >= " . $ajax->jumlah . "
+            order by kapasitas");
         }
         foreach ($tabeldata as $key) {
             $data .= '<tr><td>' . $no . '</td><td>Nomor ' . $key->no_meja . '</td><td>' . $key->kapasitas
@@ -34,17 +36,27 @@ class AjaxController extends Controller
         $data = null;
         if ($ajax->ajax()) {
             $datamenu = Menu::withTrashed()->where('id', $ajax->id)->get();
+            foreach ($datamenu as $key) {
+                $data = [
+                    'id' => $key->id,
+                    'name' => ucwords($key->name),
+                    'desc' => $key->description,
+                    'cat' => $key->id_category,
+                    'price' => $key->price
+                ];
+            }
+            // cek jika gambar ada di images/menu
+            if (is_file(public_path('images/menu/' . $data['id'] . '.jpg'))) {
+                $data = [
+                    'src' => URL::to('/images/menu/' . $data['id'] . '.jpg')
+                ];
+            } else {
+                $data = [
+                    'src' =>  URL::to('/images/default.jpg')
+                ];
+            }
+            return Response($data);
         }
-        foreach ($datamenu as $key) {
-            $data = [
-                'id' => $key->id,
-                'name' => ucwords($key->name),
-                'desc' => $key->description,
-                'cat' => $key->id_category,
-                'price' => $key->price
-            ];
-        }
-        return Response($data);
     }
 
     public function search(Request $ajax)

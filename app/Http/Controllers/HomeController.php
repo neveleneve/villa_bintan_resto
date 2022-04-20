@@ -131,7 +131,6 @@ class HomeController extends Controller
 
     public function menus()
     {
-        // echo URL::to('/');
         $data = DB::table('menus')
             ->join('menu_categories', 'menus.id_category', '=', 'menu_categories.id')
             ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.name as category_name', 'menus.deleted_at')
@@ -151,10 +150,6 @@ class HomeController extends Controller
     {
         $id = DB::select("SHOW TABLE STATUS LIKE 'menus'");
         $next_id = $id[0]->Auto_increment;
-        // echo $next_id;
-        // echo '<br>';
-        // echo $data->image;
-        // dd($data->all());
         if (isset($data->image)) {
             $img = $data->file('image');
             $dest = public_path('/images/menu');
@@ -173,6 +168,10 @@ class HomeController extends Controller
     }
     public function menudelete($id)
     {
+        // $datamenu = Menu::where('id', $id)->get();
+        // if (is_file(public_path('images/menu/' . $datamenu[0]['id'] . '.jpg'))) {
+        //     File::delete(public_path('images/menu/' . $datamenu[0]['id'] . '.jpg'));
+        // }
         Menu::where('id', $id)->delete();
         return redirect(route('adminmenus'));
     }
@@ -204,7 +203,6 @@ class HomeController extends Controller
     {
         $payment = Payment::where('order_id', $id)->get();
         if (count($payment) > 0) {
-            // get data from midtrans server
             $endpoint = "https://api.sandbox.midtrans.com/v2/" . $id . "/status";
             $client = new \GuzzleHttp\Client([
                 'headers' => [
@@ -218,6 +216,7 @@ class HomeController extends Controller
         } else {
             return redirect(route('adminpayments'));
         }
+        // dd($content);
         return view('admin.paymentstatus', [
             'payment_data' => $content
         ]);

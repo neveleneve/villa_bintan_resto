@@ -15,9 +15,9 @@ Payment Detail and Status | Administrator
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-4">
-                        <button onclick="history.back()" class="btn btn-outline-default btn-block">
+                        <a href="{{ route('adminpayments') }}" class="btn btn-outline-default btn-block">
                             Back
-                        </button>
+                        </a>
                     </div>
                 </div>
                 <hr>
@@ -70,7 +70,7 @@ Payment Detail and Status | Administrator
                             <label>:</label>
                         </div>
                         <div class="col-3">
-                            <label>{{ number_format($payment_data['payment_amounts'][0]['amount'],0,',', '.') }} <strong>IDR</strong></label>
+                            <label>{{ number_format($payment_data['gross_amount'],0,',', '.') }} <strong>IDR</strong></label>
                         </div>
                         <div class="col-2">
                             <label class="font-weight-bold">Payment Date</label>
@@ -79,7 +79,7 @@ Payment Detail and Status | Administrator
                             <label>:</label>
                         </div>
                         <div class="col-3">
-                            <label>{{ date('d M Y, H:i:s', strtotime($payment_data['payment_amounts'][0]['paid_at'])) }}</label>
+                            <label>{{ date('d M Y, H:i:s', strtotime($payment_data['settlement_time'])) }}</label>
                         </div>
                     </div>
                 @else

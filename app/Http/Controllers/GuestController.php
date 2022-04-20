@@ -123,7 +123,7 @@ class GuestController extends Controller
         } else {
         }
         // dd($data->all());
-        dd($menudb);
+        // dd($menudb);
         if ($menudb == $menu) {
             for ($i = 0; $i < count($dataarraykey); $i++) {
                 $menudatabase = Menu::where('id', $datamenuid[$dataarraykey[$i]])->get('price');

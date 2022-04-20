@@ -77,9 +77,9 @@ Menus | Administrator
                                     <input type="hidden" name="id_menu" value="{{ $item->id }}">
                                     <button type="button" class="btn btn-sm btn-outline-default" type="button" onclick="getMenuData({{ $item->id }})" data-toggle="modal" data-target="#modalViewMenu">View</button>
                                     @if($item->deleted_at == null)
-                                    <a href="{{ route('adminmenudelete', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this menu?')">Delete</a>
+                                    <a href="{{ route('adminmenudelete', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deactivate this menu?')">Deactive</a>
                                     @else
-                                    <a href="{{ route('adminmenurestore', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-primary" onclick="return confirm('Restore this menu?')">Restore</a>
+                                    <a href="{{ route('adminmenurestore', ['id' => $item->id]) }}" class="btn btn-sm btn-outline-success" onclick="return confirm('Activate this menu?')">Activate</a>
                                     @endif
                                 </td>
                             </tr>
@@ -154,7 +154,7 @@ Menus | Administrator
                     <div class="text-center">
                         <label for="imagenow" class="font-weight-bold h5">Image</label>
                         <br>
-                        <img id="imagenow" src="{{ asset('images/menu/1.jpg') }}" class="img-fluid img-thumbnail">
+                        <img id="imagenow" class="img-fluid img-thumbnail" style="width: 25%">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -243,7 +243,7 @@ Menus | Administrator
                 $('#viewcat').val(data.cat);
                 $('#viewprice').val(data.price);
                 // make a function to check if image is exist
-                $("#imagenow").attr("src", "{{URL::to('/')}}/images/menu/" + data.id + ".jpg");
+                $("#imagenow").attr("src", data.src);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status);
