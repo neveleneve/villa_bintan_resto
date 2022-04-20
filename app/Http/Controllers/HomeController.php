@@ -216,9 +216,16 @@ class HomeController extends Controller
         } else {
             return redirect(route('adminpayments'));
         }
+<<<<<<< HEAD
         // dd($content);
         return view('admin.paymentstatus', [
             'payment_data' => $content
         ]);
+=======
+        dd($content);
+        // return view('admin.paymentstatus', [
+        //     'payment_data' => $content
+        // ]);
+>>>>>>> 7c91510fa8947d6abfd9e0de521f0b428e18425a
     }
 }
