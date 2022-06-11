@@ -120,26 +120,6 @@ class GuestController extends Controller
             $datamenuid = $data->menu_id;
             // list array key dari menu yang dipilih pada tampilan web
             $dataarraykey = array_keys($dataarray);
-<<<<<<< HEAD
-        } else {
-        }
-        // dd($data->all());
-        // dd($menudb);
-        if ($menudb == $menu) {
-            for ($i = 0; $i < count($dataarraykey); $i++) {
-                $menudatabase = Menu::where('id', $datamenuid[$dataarraykey[$i]])->get('price');
-                $datapesan[$i] = [
-                    'reservation_code' => $reservation_code,
-                    'menu_id' => $datamenuid[$dataarraykey[$i]],
-                    'harga' => $menudatabase[0]['price'],
-                    'jumlah' => $jumlahmenu[$dataarraykey[$i]],
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ];
-            }
-            if ($datapesan == null) {
-                $tablefee = 50000;
-=======
             dd($menudb);
             if ($menudb == $menu) {
                 for ($i = 0; $i < count($dataarraykey); $i++) {
@@ -153,7 +133,6 @@ class GuestController extends Controller
                         'updated_at' => date('Y-m-d H:i:s'),
                     ];
                 }
->>>>>>> 7c91510fa8947d6abfd9e0de521f0b428e18425a
             } else {
                 return redirect(route('choosemenu', [
                     'id' => $data->id
