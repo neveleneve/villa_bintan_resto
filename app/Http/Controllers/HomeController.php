@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Redirect;
 
 class HomeController extends Controller
 {
@@ -197,6 +198,16 @@ class HomeController extends Controller
         return view('admin.category', [
             'category' => $data
         ]);
+    }
+
+    public function addcategories(Request $data)
+    {
+        MenuCategory::insert([
+            'name' => $data->nama,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+        return redirect(route('admincategories'));
     }
 
     public function paymentstatus($id)

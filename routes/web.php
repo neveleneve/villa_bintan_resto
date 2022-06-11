@@ -51,3 +51,6 @@ Route::post('/menu/add', 'HomeController@menuadd')->name('adminmenuadd');
 Route::get('/menu/search', 'AjaxController@search')->name('adminmenusearch');
 
 Route::get('/categories', 'HomeController@categories')->name('admincategories');
+Route::post('/categories/add', 'HomeController@addcategories')->name('adminaddcategories');
+Route::post('/categories/edit', 'HomeController@editcategories')->name('admineditcategories');
+Route::get('/categories/view', 'AjaxController@getDataCategory')->name('getcategorydata');

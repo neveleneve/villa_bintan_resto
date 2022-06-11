@@ -120,7 +120,7 @@ class GuestController extends Controller
             $datamenuid = $data->menu_id;
             // list array key dari menu yang dipilih pada tampilan web
             $dataarraykey = array_keys($dataarray);
-            dd($menudb);
+            // dd($menudb);
             if ($menudb == $menu) {
                 for ($i = 0; $i < count($dataarraykey); $i++) {
                     $menudatabase = Menu::where('id', $datamenuid[$dataarraykey[$i]])->get('price');

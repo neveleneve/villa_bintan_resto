@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Menu;
+use App\MenuCategory;
 use App\Reservation;
 use App\Table;
 use Illuminate\Http\Request;
@@ -117,5 +118,15 @@ class AjaxController extends Controller
             </tr>';
         }
         return Response($data);
+    }
+
+    public function getDataCategory(Request $ajax)
+    {
+        $data = MenuCategory::where('id', $ajax->id)->get();
+        $respond = [
+            'id' => $data[0]['id'],
+            'nama' => $data[0]['name'],
+        ];
+        return json_encode($respond);
     }
 }
