@@ -68,6 +68,7 @@
                 </div>
                 <form action="{{ route('admineditcategories') }}" method="post">
                     {{ csrf_field() }}
+                    <input type="hidden" name="idkategori" id="idkategori" value="">
                     <div class="modal-body">
                         <label for="namakategori" class="font-weight-bold">Nama Kategori</label>
                         <input type="text" class="form-control form-control-sm" name="namakategori" id="namakategori"
@@ -78,7 +79,7 @@
                             Batal
                         </button>
                         <button type="submit" class="btn btn-sm btn-outline-default">
-                            Tambah Data
+                            Ubah Data
                         </button>
                     </div>
                 </form>
@@ -125,7 +126,8 @@
                     'id' : id,
                 },
                 success: function(datax) {
-                    $('#namakategori').val(datax.nama),
+                    $('#namakategori').val(datax.nama);
+                    $('#idkategori').val(datax.id);
                 },
                 error: function(xhr, ajaxOptions, thrownError) {
                     alert(xhr.status);

@@ -200,6 +200,15 @@ class HomeController extends Controller
         ]);
     }
 
+    public function editcategories(Request $data)
+    {
+        // dd($data->all());
+        MenuCategory::where('id', $data->idkategori)->update([
+            'name' => $data->namakategori
+        ]);
+        return redirect(route('admincategories'));
+    }
+
     public function addcategories(Request $data)
     {
         MenuCategory::insert([

@@ -6,6 +6,7 @@ use App\Menu;
 use App\MenuCategory;
 use App\Reservation;
 use App\Table;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -127,6 +128,6 @@ class AjaxController extends Controller
             'id' => $data[0]['id'],
             'nama' => $data[0]['name'],
         ];
-        return json_encode($respond);
+        return Response($respond);
     }
 }
