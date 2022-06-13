@@ -35,33 +35,38 @@ class AjaxController extends Controller
 
     public function menuview(Request $ajax)
     {
-        $data = null;
+        // $data = null;
         if ($ajax->ajax()) {
             $datamenu = Menu::withTrashed()->where('id', $ajax->id)->get();
-            foreach ($datamenu as $key) {
-                $data = [
-                    'id' => $key->id,
-                    'name' => ucwords($key->name),
-                    'desc' => $key->description,
-                    'cat' => $key->id_category,
-                    'price' => $key->price
-                ];
-            }
             // cek jika gambar ada di images/menu
-            if (is_file(public_path('images/menu/' . $data['id'] . '.jpg'))) {
+            if (is_file(public_path('images/menu/' . $datamenu[0]['id'] . '.jpg'))) {
                 $data = [
-                    'src' => URL::to('/images/menu/' . $data['id'] . '.jpg')
+                    'id' => $datamenu[0]->id,
+                    'name' => ucwords($datamenu[0]->name),
+                    'desc' => $datamenu[0]->description,
+                    'cat' => $datamenu[0]->id_category,
+                    'price' => $datamenu[0]->price,
+                    'src' => URL::to('/images/menu/' . $datamenu[0]['id'] . '.jpg'),
+                    'hasimage' => true,
+                    'link' => route('adminmenuimagedelete', ['id' => $datamenu[0]->id])
                 ];
             } else {
                 $data = [
-                    'src' =>  URL::to('/images/default.jpg')
+                    'id' => $datamenu[0]->id,
+                    'name' => ucwords($datamenu[0]->name),
+                    'desc' => $datamenu[0]->description,
+                    'cat' => $datamenu[0]->id_category,
+                    'price' => $datamenu[0]->price,
+                    'src' =>  URL::to('/images/default.jpg'),
+                    'hasimage' => false,
+                    'link' => null
                 ];
             }
             return Response($data);
         }
     }
 
-    public function search(Request $ajax)
+    public function menusearch(Request $ajax)
     {
         $data = null;
         if ($ajax->ajax()) {
@@ -83,41 +88,50 @@ class AjaxController extends Controller
         $status = null;
         $delete = null;
         $image = null;
-        foreach ($tabeldata as $key) {
-            if (File::exists(public_path('images/menu/' . $key->id . '.jpg'))) {
-                $image = '<img src="' . asset('images/menu/' . $key->id . '.jpg') . '">';
-            } else {
-                $image = '<img src="' . asset('images/menu/default.jpg') . '">';
+        if (count($tabeldata) > 0) {
+            foreach ($tabeldata as $key) {
+                if (File::exists(public_path('images/menu/' . $key->id . '.jpg'))) {
+                    $image = '<img src="' . asset('images/menu/' . $key->id . '.jpg') . '">';
+                } else {
+                    $image = '<img src="' . asset('images/default.jpg') . '">';
+                }
+                if ($key->deleted_at == null) {
+                    $status = '<i class="fas fa-check" title="Available"></i>';
+                    $delete = '<a href="' . route("adminmenudelete", ["id" => $key->id]) . '" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'Delete this menu?\')">Delete</a>';
+                } else {
+                    $status = '<i class="fas fa-times" title="Not Available"></i>';
+                    $delete = '<a href="' . route("adminmenurestore", ["id" => $key->id]) . '" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'Restore this menu?\')">Restore</a>';
+                }
+                $data .= '<tr>
+                <td class="align-middle">
+                <div class="media align-items-center">
+                <a class="avatar mr-3">
+                ' . $image . '
+                </a>
+                <div class="media-body">
+                <span class="name mb-0 text-sm">' . ucwords(strtolower($key->name)) . '</span>
+                </div>
+                </div>
+                </td>
+                <td class="align-middle">' . ucfirst($key->description) . '</td>
+                <td class="align-middle">' . ucfirst($key->category_name) . '</td>
+                <td class="align-middle">' . number_format($key->price, 0, ',', '.') . ' <strong>IDR</strong></td>
+                <td class="align-middle">' . $status . '</td>
+                <td class="align-middle">
+                <input type="hidden" name="id_menu" value="' . $key->id . '">
+                <button type="button" class="btn btn-sm btn-outline-default" type="button" onclick="getMenuData(' . $key->id . ')" data-toggle="modal" data-target="#modalViewMenu">View</button>
+                ' . $delete . '
+                </td>
+                </tr>';
             }
-            if ($key->deleted_at == null) {
-                $status = '<i class="fas fa-check" title="Available"></i>';
-                $delete = '<a href="' . route("adminmenudelete", ["id" => $key->id]) . '" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'Delete this menu?\')">Delete</a>';
-            } else {
-                $status = '<i class="fas fa-times" title="Not Available"></i>';
-                $delete = '<a href="' . route("adminmenurestore", ["id" => $key->id]) . '" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'Restore this menu?\')">Restore</a>';
-            }
+        } else {
             $data .= '<tr>
-            <td class="align-middle">
-            <div class="media align-items-center">
-            <a class="avatar mr-3">
-            ' . $image . '
-            </a>
-            <div class="media-body">
-            <span class="name mb-0 text-sm">' . ucwords(strtolower($key->name)) . '</span>
-            </div>
-            </div>
-            </td>
-            <td class="align-middle">' . ucfirst($key->description) . '</td>
-            <td class="align-middle">' . ucfirst($key->category_name) . '</td>
-            <td class="align-middle">' . number_format($key->price, 0, ',', '.') . ' <strong>IDR</strong></td>
-            <td class="align-middle">' . $status . '</td>
-            <td class="align-middle">
-            <input type="hidden" name="id_menu" value="' . $key->id . '">
-            <button type="button" class="btn btn-sm btn-outline-default" type="button" onclick="getMenuData(' . $key->id . ')" data-toggle="modal" data-target="#modalViewMenu">View</button>
-            ' . $delete . '
-            </td>
+                <td colspan="6">
+                    <h1 class="text-center">Data Menu Kosong</h1>
+                </td>
             </tr>';
         }
+
         return Response($data);
     }
 

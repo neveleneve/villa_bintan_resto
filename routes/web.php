@@ -10,7 +10,7 @@ Route::get('/', function () {
 // route ke tampilan menu
 Route::get('/menu', 'GuestController@menu')->name('menu');
 // route ke tampilan tentang villa bintan resto
-Route::get('/about', 'GuestController@about')->name('about');
+// Route::get('/about', 'GuestController@about')->name('about');
 // route ke tampilan reservasi meja
 Route::get('/reservation', 'GuestController@reservation')->name('reservation');
 // route ke tampilan memilih menu setelah reservasi meja
@@ -48,7 +48,8 @@ Route::get('/menu/restore/{id}', 'HomeController@menurestore')->name('adminmenur
 Route::get('/menu/view', 'AjaxController@menuview')->name('adminmenuview'); //ajax
 Route::post('/menu/edit', 'HomeController@menuedit')->name('adminmenuedit');
 Route::post('/menu/add', 'HomeController@menuadd')->name('adminmenuadd');
-Route::get('/menu/search', 'AjaxController@search')->name('adminmenusearch');
+Route::get('/menu/image/delete/{id}', 'HomeController@deleteimagemenu')->name('adminmenuimagedelete');
+Route::get('/menu/search', 'AjaxController@menusearch')->name('adminmenusearch');
 
 Route::get('/categories', 'HomeController@categories')->name('admincategories');
 Route::post('/categories/add', 'HomeController@addcategories')->name('adminaddcategories');

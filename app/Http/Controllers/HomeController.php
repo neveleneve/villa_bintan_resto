@@ -169,10 +169,6 @@ class HomeController extends Controller
     }
     public function menudelete($id)
     {
-        // $datamenu = Menu::where('id', $id)->get();
-        // if (is_file(public_path('images/menu/' . $datamenu[0]['id'] . '.jpg'))) {
-        //     File::delete(public_path('images/menu/' . $datamenu[0]['id'] . '.jpg'));
-        // }
         Menu::where('id', $id)->delete();
         return redirect(route('adminmenus'));
     }
@@ -183,13 +179,27 @@ class HomeController extends Controller
     }
     public function menuedit(Request $data)
     {
+        // dd($data->all());
+        if (isset($data->image)) {
+            if (File::exists(public_path('images/menu/' . $data->viewid . '.jpg'))) {
+                File::delete(public_path('images/menu/' . $data->viewid . '.jpg'));
+            }
+            $img = $data->file('image');
+            $dest = public_path('/images/menu');
+            $img->move($dest, $data->viewid . '.jpg');
+        }
         Menu::where('id', $data->viewid)->update([
             'name' => strtolower($data->viewname),
             'price' => $data->viewprice,
-            'description' => $data->viewdesc . '.',
+            'description' => $data->viewdesc,
             'id_category' => $data->viewcat
         ]);
         return redirect(route('adminmenus'));
+    }
+
+    public function deleteimagemenu($id)
+    {
+        echo $id;
     }
 
     public function categories()
