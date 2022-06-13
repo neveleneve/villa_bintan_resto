@@ -19,11 +19,11 @@
                         Menu
                     </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('about') }}" class="nav-link {{ Request::is('about') ? 'active' : null }} font-weight-bold">
                         About Us
                     </a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a href="{{ route('home') }}" class="nav-link {{ Request::is('login') || Request::is('dashboard') || Request::is('reservations') ? 'active' : null }} font-weight-bold">
                         Administrator

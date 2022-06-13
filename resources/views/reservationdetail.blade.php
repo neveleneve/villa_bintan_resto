@@ -205,7 +205,7 @@
                         <hr>
                         <div class="row">
                             <div class="col-2">
-                                {{ $qrcode }}
+                                {{-- {{ $qrcode }} --}}
                             </div>
                             <div class="col-8">
                                 <ul>

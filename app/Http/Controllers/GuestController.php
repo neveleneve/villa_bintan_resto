@@ -11,8 +11,6 @@ use App\ReservedMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
-use Symfony\Component\Mime\Encoder\Base64Encoder;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class GuestController extends Controller
 {
@@ -285,7 +283,7 @@ class GuestController extends Controller
                     ]);
                 }
             }
-            $qrcode = QrCode::size(200)->generate(route('paymentsstatus', ['id' => $id]));
+            // $qrcode = QrCode::size(200)->generate(route('paymentsstatus', ['id' => $id]));
             // data pesanan
             return view('reservationdetail', [
                 'reservation_data' => $basedata,
@@ -295,7 +293,7 @@ class GuestController extends Controller
                 'payments_url' => $paymentUrl,
                 'random' => $random,
                 'status_pembayaran' => $content,
-                'qrcode' => $qrcode,
+                // 'qrcode' => $qrcode,
                 'id' => $id,
                 'jumlahpembayaran' => count($datapayments),
                 'datapembayaran' => $datapayments,
