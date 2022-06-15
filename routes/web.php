@@ -2,9 +2,12 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Milon\Barcode\DNS1D;
+use Milon\Barcode\DNS2D;
 
 // route ke tampilan home
 Route::get('/', function () {
+    // echo '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG('AB12msaodh', 'C39+',3,33) . '" alt="barcode"   />';
     return view('welcome');
 })->name('dashboard');
 // route ke tampilan menu
