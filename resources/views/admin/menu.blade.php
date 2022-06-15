@@ -263,9 +263,7 @@
                     $('#viewdesc').val(data.desc);
                     $('#viewcat').val(data.cat);
                     $('#viewprice').val(data.price);
-                    $('#linkhapus').attr('href', data.link)
-                    // $('#image').val('');
-                    // make a function to check if image is exist
+                    $('#linkhapus').attr('href', data.link);
                     $("#imagenow").attr("src", data.src);
                     if (data.hasimage === true) {
                         $('#gambarnow').attr('hidden', false);
