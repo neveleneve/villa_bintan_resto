@@ -11,6 +11,7 @@ use App\ReservedMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Milon\Barcode\DNS1D;
 
 class GuestController extends Controller
 {
@@ -283,7 +284,7 @@ class GuestController extends Controller
                     ]);
                 }
             }
-            // $qrcode = QrCode::size(200)->generate(route('paymentsstatus', ['id' => $id]));
+            $qrcode = DNS1D::getBarcodePNG($id, 'C39+');
             // data pesanan
             return view('reservationdetail', [
                 'reservation_data' => $basedata,
@@ -293,7 +294,7 @@ class GuestController extends Controller
                 'payments_url' => $paymentUrl,
                 'random' => $random,
                 'status_pembayaran' => $content,
-                // 'qrcode' => $qrcode,
+                'barcode' => $qrcode,
                 'id' => $id,
                 'jumlahpembayaran' => count($datapayments),
                 'datapembayaran' => $datapayments,

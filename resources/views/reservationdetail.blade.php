@@ -203,14 +203,16 @@
                     </div>
                     @if ($jumlahpembayaran > 0)
                         <hr>
-                        <div class="row">
-                            <div class="col-2">
-                                {{-- {{ $qrcode }} --}}
+                        <div class="row justify-content-center">
+                            <div class="col-12 mb-3 text-center">
+                                Save barcode for easy access to payment status and transction's proof
                             </div>
-                            <div class="col-8">
-                                <ul>
-                                    <li>Save the QR Code for easy access to payment status</li>
-                                </ul>
+                            <div class="col-12 text-center mb-3">
+                                <img class="img-thumbnail" src="data:image/png;base64, {{ $barcode }}"
+                                    alt="barcode">
+                            </div>
+                            <div class="col-12 text-center mb-3">
+                                <button class="btn btn-sm btn-primary">Download</button>
                             </div>
                         </div>
                     @endif

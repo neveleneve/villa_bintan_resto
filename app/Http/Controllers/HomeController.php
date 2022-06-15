@@ -196,10 +196,11 @@ class HomeController extends Controller
         ]);
         return redirect(route('adminmenus'));
     }
-
+    
     public function deleteimagemenu($id)
     {
-        echo $id;
+        File::delete(public_path('images/menu/' . $id . '.jpg'));
+        return redirect(route('adminmenus'));
     }
 
     public function categories()
