@@ -208,7 +208,14 @@
                                 Save barcode for easy access to payment status and transction's proof
                             </div>
                             <div class="col-12 text-center mb-3">
-                                <img class="img-thumbnail" src="data:image/png;base64, {{ $barcode }}"
+                                @php
+                                    $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+                                    if (!File::exists(public_path('images/barcode/' . $id . '.png'))) {
+                                        file_put_contents('images/barcode/' . $id . '.png', $generator->getBarcode($id, $generator::TYPE_CODE_128, 3, 50, [255, 0, 0]));
+                                    }
+                                @endphp
+                                {{-- {!! $generator->getBarcode('0001245259636', $generator::TYPE_CODE_128) !!} --}}
+                                <img class="img-thumbnail" src="{{ asset('images/barcode/' . $id . '.png') }}"
                                     alt="barcode">
                             </div>
                             <div class="col-12 text-center mb-3">
