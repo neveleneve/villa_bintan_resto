@@ -218,7 +218,9 @@
                                     alt="barcode">
                             </div>
                             <div class="col-12 text-center mb-3">
-                                <button class="btn btn-sm btn-primary">Download</button>
+                                <a onclick="return confirm('Download barcode pemesanan?')"
+                                    href="{{ route('downloadbarcode', ['id' => $id]) }}"
+                                    class="btn btn-sm btn-primary">Download</a>
                             </div>
                         </div>
                     @endif

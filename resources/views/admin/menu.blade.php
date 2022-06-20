@@ -15,8 +15,8 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-4">
-                            <input class="form-control" type="text" name="cari" id="cari" placeholder="Search..."
-                                oninput="search(this.value)">
+                            <input class="form-control" type="text" name="cari" id="cari"
+                                placeholder="Search menu name" oninput="search(this.value)">
                         </div>
                         <div class="col-8">
                             <button class="btn btn-outline-default btn-block" type="button" data-toggle="modal"
@@ -162,7 +162,8 @@
                             Image
                         </label>
                         <div class="custom-file mb-3">
-                            <input type="file" class="custom-file-input" id="image" name="image" accept="image/*">
+                            <input type="file" class="custom-file-input" id="image" name="image"
+                                accept="image/*">
                             <label class="custom-file-label" for="image">Select Image</label>
                         </div>
                         <div class="text-center">
@@ -171,7 +172,8 @@
                             <img id="imagenow" class="img-fluid img-thumbnail mb-3" style="width: 25%">
                             <br>
                             <a id="linkhapus" onclick="return confirm('Hapus gambar menu ini??')">
-                                <button type="button" class="btn btn-sm btn-outline-danger" id="gambarnow" hidden="true">
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="gambarnow"
+                                    hidden="true">
                                     Hapus Gambar
                                 </button>
                             </a>
@@ -204,7 +206,8 @@
                         <label for="name" class="font-weight-bold h5">
                             Name
                         </label>
-                        <input type="text" class="form-control mb-3" id="name" name="name" required placeholder="Menu Name">
+                        <input type="text" class="form-control mb-3" id="name" name="name" required
+                            placeholder="Menu Name">
                         <label for="desc" class="font-weight-bold h5">
                             Description
                         </label>
@@ -231,7 +234,8 @@
                             Image
                         </label>
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="image" name="image" accept="image/*">
+                            <input type="file" class="custom-file-input" id="image" name="image"
+                                accept="image/*">
                             <label class="custom-file-label" for="image">Select Image</label>
                         </div>
                     </div>
@@ -279,7 +283,6 @@
 
         function search(key) {
             var tabelbody = $('#tablemenu');
-            // var key = $('#cari').val();
             $.ajax({
                 type: 'GET',
                 url: '{{ route('adminmenusearch') }}',

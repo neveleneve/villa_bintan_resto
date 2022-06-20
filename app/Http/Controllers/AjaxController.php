@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Menu;
 use App\MenuCategory;
+use App\Payment;
 use App\Reservation;
 use App\Table;
 use GuzzleHttp\Psr7\Response;
@@ -143,5 +144,56 @@ class AjaxController extends Controller
             'nama' => $data[0]['name'],
         ];
         return Response($respond);
+    }
+
+    public function paymentssearch(Request $ajax)
+    {
+        $data = null;
+        if ($ajax->ajax()) {
+            if ($ajax->key != null || $ajax->key != '') {
+                $datapayment = Payment::where('reservation_code', 'LIKE', '%' . $ajax->key . '%')
+                    ->orWhere('order_id', 'LIKE', '%' . $ajax->key . '%')
+                    ->get();
+            } else {
+                $datapayment = Payment::get();
+            }
+            if (count($datapayment) > 0) {
+                foreach ($datapayment as $key) {
+                    $data .= '<tr>
+                        <td>
+                            <a class="text-dark"
+                                href="' . route('adminreservationdetail', ['id' => $key->reservation_code]) . '">
+                                <u>
+                                    ' . $key->reservation_code . '
+                                </u>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="text-dark"
+                                href="' . route('paymentstatus', ['id' => $key->order_id]) . '">
+                                <u>
+                                    ' . $key->order_id . '
+                                </u>
+                            </a>
+                        </td>
+                        <td>
+                            ' . ucfirst($key->transaction_status) . '
+                        </td>
+                    </tr>';
+                }
+            } else {
+                $data .= '<tr>
+                <td colspan="4">
+                    <h1 class="text-center">Data Payments Kosong</h1>
+                </td>
+                </tr>';
+            }
+            return Response($data);
+        }
+    }
+
+    public function reservationssearch(Request $ajax)
+    {
+        # code...
     }
 }

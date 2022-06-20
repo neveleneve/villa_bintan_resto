@@ -11,6 +11,7 @@ use App\ReservedMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Response;
 
 class GuestController extends Controller
 {
@@ -283,11 +284,6 @@ class GuestController extends Controller
                     ]);
                 }
             }
-            // $qrcode = DNS2D::getBarcodePNG($id, 'PDF417');
-            // $qrcode = new Picqer\Barcode\BarcodeGeneratorHTML();
-            // data pesanan
-            // dd($qrcode);
-            // $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
             return view('reservationdetail', [
                 'reservation_data' => $basedata,
                 'reservation_fee_data' => $tablefee,
@@ -296,11 +292,21 @@ class GuestController extends Controller
                 'payments_url' => $paymentUrl,
                 'random' => $random,
                 'status_pembayaran' => $content,
-                // 'barcode' => $qrcode,
                 'id' => $id,
                 'jumlahpembayaran' => count($datapayments),
                 'datapembayaran' => $datapayments,
             ]);
         }
+    }
+
+    public function downloadbarcode($id)
+    {
+        $file = public_path('images/barcode/' . $id . '.png');
+
+        $headers = array(
+            'Content-Type: image/png',
+        );
+
+        return Response::download($file, 'Table Booking Villa Bintan Resto ' . $id . '.png', $headers);
     }
 }

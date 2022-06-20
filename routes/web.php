@@ -20,6 +20,7 @@ Route::get('/reservation', 'GuestController@reservation')->name('reservation');
 Route::get('/reservation/{id}', 'GuestController@menureservation')->name('choosemenu');
 // route ke tampilan detail pemesanan setelah memilih menu
 Route::get('/reservation-detail/{id}', 'GuestController@reservationdetails')->name('reservationdetail');
+Route::get('/reservation/barcode/{id}', 'GuestController@downloadbarcode')->name('downloadbarcode');
 
 // fungsi input reservasi meja
 Route::post('/reserve', 'GuestController@reserve')->name('reserve');
@@ -42,8 +43,10 @@ Route::get('/dashboard', 'HomeController@index')->name('home');
 
 Route::get('/reservations', 'HomeController@reservation')->name('adminreservation');
 Route::get('/reservation/detail/{id}', 'HomeController@reservationdetail')->name('adminreservationdetail');
+Route::get('/reservations/search', 'AjaxController@reservationssearch')->name('adminreservationssearch');
 
 Route::get('/payments', 'HomeController@payments')->name('adminpayments');
+Route::get('/payments/search', 'AjaxController@paymentssearch')->name('adminpaymentssearch');
 
 Route::get('/menus', 'HomeController@menus')->name('adminmenus');
 Route::get('/menu/delete/{id}', 'HomeController@menudelete')->name('adminmenudelete');
