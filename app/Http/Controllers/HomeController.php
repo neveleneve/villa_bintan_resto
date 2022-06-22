@@ -140,6 +140,7 @@ class HomeController extends Controller
         $menuavail = Menu::where('deleted_at', '=', null)->count();
         $menunotavail = Menu::onlyTrashed()->count();
         $cat = MenuCategory::get();
+        // dd($cat);
         return view('admin.menu', [
             'menu' => $data,
             'menuavail' => $menuavail,

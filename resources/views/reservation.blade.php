@@ -7,7 +7,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <h1 class="display-2 text-default text-center">Reservation</h1>
+            <h1 class="display-2 text-default text-center">Reservation Detail</h1>
         </div>
     </div>
     <hr>
@@ -39,20 +39,31 @@
                             </div>
                             <div class="col-6">
                                 <label for="kontak" class="font-weight-bold">Contact</label>
-                                <input class="form-control" type="text" name="kontak" id="kontak"
-                                    value="{{ Session::has('kontak') ? session('kontak') : null }}"
-                                    placeholder="Insert Your Contact Here..." required>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <img class="img-thumbnail" src="{{ asset('images/icons/indonesia.png') }}"
+                                                    alt="">&nbsp;
+                                                +62
+                                            </span>
+                                        </div>
+                                        <input class="form-control" type="text" name="kontak" id="kontak"
+                                            value="{{ Session::has('kontak') ? session('kontak') : null }}"
+                                            onkeypress="validate(event)" placeholder="Insert Your Contact Here..." required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-3">
-                                <label for="tanggal" class="font-weight-bold">Date</label>
+                                <label for="tanggal" class="font-weight-bold">Reservation Date</label>
                                 <input class="form-control" type="date" name="tanggal" id="tanggal"
                                     value="{{ Session::has('tanggal') ? session('tanggal') : date('Y-m-d', strtotime(date(now()) . '+1 days')) }}"
                                     placeholder="Select date..." min="{{ date('Y-m-d') }}">
                             </div>
                             <div class="col-3">
-                                <label for="waktu" class="font-weight-bold">Time</label>
+                                <label for="waktu" class="font-weight-bold">Reservation Time</label>
                                 <input class="form-control" type="time" name="waktu" id="waktu"
                                     placeholder="Select time..."
                                     value="{{ Session::has('waktu') ? session('waktu') : '13:00' }}" min="13:00"
@@ -62,8 +73,10 @@
                                 <label for="seat" class="font-weight-bold">Capacity</label>
                                 <select class="form-control" id="seat" name="seat">
                                     @if (Session::has('seat'))
-                                        <option value="1" {{ session('seat') == 1 ? 'selected' : null }}>1 Person</option>
-                                        <option value="2" {{ session('seat') == 2 ? 'selected' : null }}>2 People</option>
+                                        <option value="1" {{ session('seat') == 1 ? 'selected' : null }}>1 Person
+                                        </option>
+                                        <option value="2" {{ session('seat') == 2 ? 'selected' : null }}>2 People
+                                        </option>
                                         <option value="3" {{ session('seat') == 3 ? 'selected' : null }}>3 People
                                         </option>
                                         <option value="4" {{ session('seat') == 4 ? 'selected' : null }}>4 People
@@ -89,21 +102,22 @@
                                     Seat</button>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <button type="submit" class="btn btn-default btn-block" onclick="return confirm('Book Now?')">Book
-                                    Now!</button>
-                            </div>
-                        </div>
+                        {{-- <div class="row">
+                        </div> --}}
                         <div class="row mt-5" id="loading" style="display: none">
                             <div class="col text-center">
                                 <i id="spinner" style="display: none" class="fa fa-spinner fa-spin fa-4x"></i>
                             </div>
                         </div>
-                        <div class="row mt-5" id="tabel" style="display: none">
-                            <div class="col">
-                                <table class="table table-hover table-bordered table-dark text-center" id="tabelmeja">
-                                    <thead>
+                        <div class="row mt-5 mb-4" id="tabel" style="display: none">
+                            <div class="col-12 mb-3">
+                                <button type="submit" class="btn btn-default btn-block"
+                                    onclick="return confirm('Book Now?')">Book
+                                    Now!</button>
+                            </div>
+                            <div class="col-12">
+                                <table class="table table-hover table-bordered text-center" id="tabelmeja">
+                                    <thead class="table-dark">
                                         <tr>
                                             <th>No</th>
                                             <th>Table Number</th>
@@ -111,7 +125,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tabelbody">
+                                    <tbody id="tabelbody" class="table-striped">
 
                                     </tbody>
                                 </table>
@@ -180,6 +194,24 @@
                     height: tabelmeja.height()
                 }, 500);
             }, 2000);
+        }
+
+        function validate(evt) {
+            var theEvent = evt || window.event;
+
+            // Handle paste
+            if (theEvent.type === 'paste') {
+                key = event.clipboardData.getData('text/plain');
+            } else {
+                // Handle key press
+                var key = theEvent.keyCode || theEvent.which;
+                key = String.fromCharCode(key);
+            }
+            var regex = /[0-9]|\./;
+            if (!regex.test(key)) {
+                theEvent.returnValue = false;
+                if (theEvent.preventDefault) theEvent.preventDefault();
+            }
         }
     </script>
 @endsection

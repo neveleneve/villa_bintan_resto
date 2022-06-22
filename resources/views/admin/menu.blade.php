@@ -40,67 +40,88 @@
                         <table class="table table-bordered text-center">
                             <thead class="bg-default text-white">
                                 <tr>
+                                    <th>Status</th>
                                     <th>Name</th>
                                     <th>Description</th>
-                                    <th>Category</th>
                                     <th>Price</th>
-                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tablemenu">
-                                @forelse($menu as $item)
-                                    <tr>
-                                        <td class="align-middle">
-                                            <div class="media align-items-center">
-                                                <a class="avatar mr-3">
-                                                    @if (File::exists(public_path('images/menu/' . $item->id . '.jpg')))
-                                                        <img src="{{ asset('images/menu/' . $item->id . '.jpg') }}">
+                                @foreach ($cat as $cate)
+                                    <tr class="bg-default">
+                                        <td colspan="5">
+                                            <h1 class="font-weight-bold h2 text-secondary">{{ ucwords($cate->name) }}</h1>
+                                        </td>
+                                    </tr>
+                                    @foreach ($menu as $item)
+                                        @php
+                                            $i = 0;
+                                        @endphp
+                                        @if ($cate->name == $item->category_name)
+                                            <tr>
+                                                <td class="align-middle">
+                                                    @if ($item->deleted_at == null)
+                                                        <i class="fas fa-check" title="Available"></i>
                                                     @else
-                                                        <img src="{{ asset('images/default.jpg') }}">
+                                                        <i class="fas fa-times" title="Not Available"></i>
                                                     @endif
-                                                </a>
-                                                <div class="media-body">
-                                                    <span
-                                                        class="name mb-0 text-sm">{{ ucwords(strtolower($item->name)) }}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">{{ ucfirst(strtolower($item->description)) }}</td>
-                                        <td class="align-middle">{{ ucfirst(strtolower($item->category_name)) }}</td>
-                                        <td class="align-middle">{{ number_format($item->price, 0, ',', '.') }}
-                                            <strong>IDR</strong>
-                                        </td>
-                                        <td class="align-middle">
-                                            @if ($item->deleted_at == null)
-                                                <i class="fas fa-check" title="Available"></i>
-                                            @else
-                                                <i class="fas fa-times" title="Not Available"></i>
-                                            @endif
-                                        </td>
-                                        <td class="align-middle">
-                                            <input type="hidden" name="id_menu" value="{{ $item->id }}">
-                                            <button type="button" class="btn btn-sm btn-outline-default" type="button"
-                                                onclick="getMenuData({{ $item->id }})" data-toggle="modal"
-                                                data-target="#modalViewMenu">View</button>
-                                            @if ($item->deleted_at == null)
-                                                <a href="{{ route('adminmenudelete', ['id' => $item->id]) }}"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Deactivate this menu?')">Deactive</a>
-                                            @else
-                                                <a href="{{ route('adminmenurestore', ['id' => $item->id]) }}"
-                                                    class="btn btn-sm btn-outline-success"
-                                                    onclick="return confirm('Activate this menu?')">Activate</a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
+                                                </td>
+                                                <td class="align-middle">
+                                                    <div class="media align-items-center">
+                                                        <a class="avatar mr-3">
+                                                            @if (File::exists(public_path('images/menu/' . $item->id . '.jpg')))
+                                                                <img
+                                                                    src="{{ asset('images/menu/' . $item->id . '.jpg') }}">
+                                                            @else
+                                                                <img src="{{ asset('images/default.jpg') }}">
+                                                            @endif
+                                                        </a>
+                                                        <div class="media-body">
+                                                            <span
+                                                                class="name mb-0 text-sm">{{ ucwords(strtolower($item->name)) }}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="align-middle">{{ ucfirst(strtolower($item->description)) }}
+                                                </td>
+                                                <td class="align-middle">{{ number_format($item->price, 0, ',', '.') }}
+                                                    <strong>IDR</strong>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <input type="hidden" name="id_menu" value="{{ $item->id }}">
+                                                    <button type="button" class="btn btn-sm btn-outline-default"
+                                                        type="button" onclick="getMenuData({{ $item->id }})"
+                                                        data-toggle="modal" data-target="#modalViewMenu">View</button>
+                                                    @if ($item->deleted_at == null)
+                                                        <a href="{{ route('adminmenudelete', ['id' => $item->id]) }}"
+                                                            class="btn btn-sm btn-outline-danger"
+                                                            onclick="return confirm('Deactivate this menu?')">Deactive</a>
+                                                    @else
+                                                        <a href="{{ route('adminmenurestore', ['id' => $item->id]) }}"
+                                                            class="btn btn-sm btn-outline-success"
+                                                            onclick="return confirm('Activate this menu?')">Activate</a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                            @php
+                                                $i++;
+                                            @endphp
+                                        @if ($i == 0)
+                                            <tr>
+                                                <td colspan="5">
+                                                    <h2>Data Menu Kosong</h2>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
                                     <tr>
-                                        <td colspan="6">
-                                            <h1 class="text-center">Data Menu Kosong</h1>
+                                        <td colspan="5">
+
                                         </td>
                                     </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

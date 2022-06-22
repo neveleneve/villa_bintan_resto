@@ -11,6 +11,7 @@ use App\ReservedMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class GuestController extends Controller
@@ -38,7 +39,11 @@ class GuestController extends Controller
     // tampil halaman reservasi
     public function reservation()
     {
-        return view('reservation');
+        if (Auth::check()) {
+            return redirect(route('home'));
+        } else {
+            return view('reservation');
+        }
     }
     // input data reservasi meja
     public function reserve(Request $data)
