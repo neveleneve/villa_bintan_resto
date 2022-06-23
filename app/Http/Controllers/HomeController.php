@@ -133,10 +133,9 @@ class HomeController extends Controller
 
     public function checkreservation()
     {
-        $payment = Payment::where('status_code', '<>', '200')
+        $payments = Payment::where('status_code', '<>', '200')
             ->get();
-        // dd($payment);
-        foreach ($payment as $key) {
+        foreach ($payments as $key) {
             $endpoint = "https://api.sandbox.midtrans.com/v2/" . $key->order_id . "/status";
             $client = new \GuzzleHttp\Client([
                 'headers' => [
@@ -155,7 +154,7 @@ class HomeController extends Controller
                 }
             }
             if ($key->status_code != $content['status_code']) {
-                Payment::where('order_id', $key->id)->update([
+                Payment::where('id', $key->id)->update([
                     'status_code' => $content['status_code']
                 ]);
             }

@@ -49,9 +49,9 @@
                             </thead>
                             <tbody id="tablemenu">
                                 @foreach ($cat as $cate)
-                                    <tr class="bg-default">
+                                    <tr class="bg-secondary">
                                         <td colspan="5">
-                                            <h1 class="font-weight-bold h2 text-secondary">{{ ucwords($cate->name) }}</h1>
+                                            <h1 class="font-weight-bold h2 text-default">{{ ucwords($cate->name) }}</h1>
                                         </td>
                                     </tr>
                                     @foreach ($menu as $item)
@@ -104,23 +104,18 @@
                                                     @endif
                                                 </td>
                                             </tr>
-                                        @endif
                                             @php
                                                 $i++;
                                             @endphp
-                                        @if ($i == 0)
-                                            <tr>
-                                                <td colspan="5">
-                                                    <h2>Data Menu Kosong</h2>
-                                                </td>
-                                            </tr>
                                         @endif
                                     @endforeach
-                                    <tr>
-                                        <td colspan="5">
-
-                                        </td>
-                                    </tr>
+                                    @if ($i == 0)
+                                        <tr>
+                                            <td colspan="5">
+                                                <h2>Data Menu Kosong</h2>
+                                            </td>
+                                        </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>
