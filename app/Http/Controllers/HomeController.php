@@ -125,9 +125,41 @@ class HomeController extends Controller
     public function payments()
     {
         $datapayment = Payment::get();
+        $this->checkreservation();
         return view('admin.payment', [
             'payments' => $datapayment
         ]);
+    }
+
+    public function checkreservation()
+    {
+        $payment = Payment::where('status_code', '<>', '200')
+            ->get();
+        // dd($payment);
+        foreach ($payment as $key) {
+            $endpoint = "https://api.sandbox.midtrans.com/v2/" . $key->order_id . "/status";
+            $client = new \GuzzleHttp\Client([
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic ' . base64_encode(env('MIDTRANS_SERVER_KEY')),
+                ]
+            ]);
+            $response = $client->request('GET', $endpoint);
+            $content = json_decode($response->getBody(), true);
+            if (isset($content['transaction_status'])) {
+                if ($key->transaction_status != $content['transaction_status']) {
+                    Payment::where('id', $key->id)->update([
+                        'transaction_status' => $content['transaction_status']
+                    ]);
+                }
+            }
+            if ($key->status_code != $content['status_code']) {
+                Payment::where('order_id', $key->id)->update([
+                    'status_code' => $content['status_code']
+                ]);
+            }
+        }
     }
 
     public function menus()
@@ -197,7 +229,7 @@ class HomeController extends Controller
         ]);
         return redirect(route('adminmenus'));
     }
-    
+
     public function deleteimagemenu($id)
     {
         File::delete(public_path('images/menu/' . $id . '.jpg'));
