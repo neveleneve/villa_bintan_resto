@@ -2,6 +2,7 @@
 /public/hot
 /public/images/menu/*
 /public/images/barcode/*
+/public/images/scan_barcode/*
 /public/storage
 /storage/*.key
 /vendor

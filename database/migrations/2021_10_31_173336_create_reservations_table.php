@@ -21,6 +21,7 @@ class CreateReservationsTable extends Migration
             $table->integer('table_id');
             $table->dateTime('time');
             $table->integer('status');
+            $table->integer('reserved_status');
             $table->timestamps();
         });
     }

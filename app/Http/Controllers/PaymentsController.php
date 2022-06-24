@@ -58,5 +58,5 @@ class PaymentsController extends Controller
             'no' => 1,
             'id' => $id,
         ]);
-    }    
+    }
 }

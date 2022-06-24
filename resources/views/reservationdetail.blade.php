@@ -213,8 +213,16 @@
                                     if (!File::exists(public_path('images/barcode/' . $id . '.png'))) {
                                         file_put_contents('images/barcode/' . $id . '.png', $generator->getBarcode($id, $generator::TYPE_CODE_128, 3, 50, [0, 0, 0]));
                                     }
+                                    if (!File::exists(public_path('images/scan_barcode/' . $id . '.png'))) {
+                                        $src = imagecreatefrompng(asset('images/barcode/' . $id . '.png'));
+                                        $dest = imagecreatefrompng(asset('images/scan_here.png'));
+                                        imagecopymerge($dest, $src, 7, 50, 0, 0, 870, 50, 100); //have to play with these numbers for it to work for you, etc.
+                                        imagepng($dest, 'images/scan_barcode/' . $id . '.png');
+                                        imagedestroy($dest);
+                                        imagedestroy($src);
+                                    }
                                 @endphp
-                                <img class="img-thumbnail" src="{{ asset('images/barcode/' . $id . '.png') }}"
+                                <img class="img-thumbnail" src="{{ asset('images/scan_barcode/' . $id . '.png') }}"
                                     alt="barcode">
                             </div>
                             <div class="col-12 text-center mb-3">

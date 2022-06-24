@@ -168,10 +168,12 @@ class HomeController extends Controller
             ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.name as category_name', 'menus.deleted_at')
             ->orderBy('menu_categories.name')
             ->get();
-        $menuavail = Menu::where('deleted_at', '=', null)->count();
-        $menunotavail = Menu::onlyTrashed()->count();
-        $cat = MenuCategory::get();
-        // dd($cat);
+        $menuavail = Menu::where('deleted_at', '=', null)
+            ->count();
+        $menunotavail = Menu::onlyTrashed()
+            ->count();
+        $cat = MenuCategory::orderBy('name')
+            ->get();
         return view('admin.menu', [
             'menu' => $data,
             'menuavail' => $menuavail,

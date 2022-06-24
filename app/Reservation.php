@@ -13,7 +13,7 @@ class Reservation extends Model
         'table_id',
         'time',
         'status',
+        'reserved_status',
         'snap_token',
     ];
-
 }

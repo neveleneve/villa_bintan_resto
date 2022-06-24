@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Menu;
+use App\MenuCategory;
 use App\Payment;
 use App\Reservation;
 use App\ReservedFee;
@@ -25,10 +26,13 @@ class GuestController extends Controller
             ->where('menus.deleted_at', null)
             ->orderBy('menu_categories.name')
             ->get();
-        // dd($data);
+        $cat = MenuCategory::orderBy('name')
+            ->get();
         return view('menu', [
-            'data' => $data
+            'data' => $data,
+            'cat' => $cat,
         ]);
+        // imagecopymerge
     }
     public function about()
     {
@@ -58,6 +62,7 @@ class GuestController extends Controller
                 'table_id' => $data->meja,
                 'time' => $data->tanggal . ' ' . $data->waktu,
                 'status' => 0,
+                'reserved_status' => 0,
             ];
             Reservation::create($datareservasi);
             return redirect(route('choosemenu', ['id' => $reservation_code]));
@@ -306,7 +311,7 @@ class GuestController extends Controller
 
     public function downloadbarcode($id)
     {
-        $file = public_path('images/barcode/' . $id . '.png');
+        $file = public_path('images/scan_barcode/' . $id . '.png');
 
         $headers = array(
             'Content-Type: image/png',
