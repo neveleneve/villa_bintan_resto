@@ -24,7 +24,7 @@
             </div>
         </div>
     @endif
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
@@ -109,15 +109,15 @@
                                 <i id="spinner" style="display: none" class="fa fa-spinner fa-spin fa-4x"></i>
                             </div>
                         </div>
-                        <div class="row mt-5 mb-4" id="tabel" style="display: none">
+                        <div class="row mt-5 mb-4" id="tabel">
                             <div class="col-12 mb-3">
                                 <button type="submit" class="btn btn-default btn-block"
                                     onclick="return confirm('Book Now?')">Book
                                     Now!</button>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mb-3">
                                 <table class="table table-hover table-bordered text-center" id="tabelmeja">
-                                    <thead class="table-dark">
+                                    <thead class="bg-default text-secondary">
                                         <tr>
                                             <th>No</th>
                                             <th>Table Number</th>
@@ -125,7 +125,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tabelbody" class="table-striped">
+                                    <tbody id="tabelbody">
 
                                     </tbody>
                                 </table>

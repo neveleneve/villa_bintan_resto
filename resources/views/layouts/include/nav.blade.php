@@ -2,20 +2,23 @@
     <div class="container">
         <a class="navbar-brand" href="{{ route('dashboard') }}">
             <img src="{{ asset('argon/assets/img/brand/favicon.png') }}" height="30" alt="">
-            Villa Bintan Resto
+            BIIE Villa Restaurant Lobam
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto ">
                 <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ Request::is('/') ? 'active' : 'font-weight-bold' }}">
+                    <a href="{{ route('dashboard') }}"
+                        class="nav-link {{ Request::is('/') ? 'active' : 'font-weight-bold' }}">
                         Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('menu') }}" class="nav-link {{ Request::is('menu') ? 'active' : null }} font-weight-bold">
+                    <a href="{{ route('menu') }}"
+                        class="nav-link {{ Request::is('menu') ? 'active' : null }} font-weight-bold">
                         Menu
                     </a>
                 </li>
@@ -25,7 +28,8 @@
                     </a>
                 </li> --}}
                 <li class="nav-item">
-                    <a href="{{ route('home') }}" class="nav-link {{ Request::is('login') || Request::is('dashboard') || Request::is('reservations') ? 'active' : null }} font-weight-bold">
+                    <a href="{{ route('home') }}"
+                        class="nav-link {{ Request::is('login') || Request::is('dashboard') || Request::is('reservations') ? 'active' : null }} font-weight-bold">
                         Administrator
                     </a>
                 </li>
@@ -33,14 +37,17 @@
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="post">
                             {{ csrf_field() }}
-                            <button type="submit" class="nav-link font-weight-bold btn btn-secondary btn-block text-default" onclick="return confirm('Are you sure want to log out?')">
+                            <button type="submit"
+                                class="nav-link font-weight-bold btn btn-secondary btn-block text-default"
+                                onclick="return confirm('Are you sure want to log out?')">
                                 Log Out
                             </button>
                         </form>
                     </li>
                 @else
                     <li class="nav-item">
-                        <a href="{{ route('reservation') }}" class="nav-link font-weight-bold btn btn-secondary btn-block text-default">
+                        <a href="{{ route('reservation') }}"
+                            class="nav-link font-weight-bold btn btn-secondary btn-block text-default">
                             Table Reservation
                         </a>
                     </li>
