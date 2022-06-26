@@ -165,9 +165,15 @@ class HomeController extends Controller
     {
         $data = DB::table('menus')
             ->join('menu_categories', 'menus.id_category', '=', 'menu_categories.id')
-            ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.name as category_name', 'menus.deleted_at')
+            ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.id as category_id', 'menus.deleted_at')
             ->orderBy('menu_categories.name')
             ->get();
+        $jmlmenupercat = DB::select(DB::raw('SELECT c.id, COUNT( s.NAME ) AS menucount FROM menu_categories c JOIN menus s ON c.id = s.id_category GROUP BY c.id'));
+        $datamenu = [];
+        foreach ($jmlmenupercat as $key) {
+            $datamenu[$key->id] = $key->menucount;
+        }
+        // dd($datamenu);
         $menuavail = Menu::where('deleted_at', '=', null)
             ->count();
         $menunotavail = Menu::onlyTrashed()
@@ -176,6 +182,7 @@ class HomeController extends Controller
             ->get();
         return view('admin.menu', [
             'menu' => $data,
+            'jmlmenu' => $datamenu,
             'menuavail' => $menuavail,
             'menunot' => $menunotavail,
             'cat' => $cat

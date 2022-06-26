@@ -35,22 +35,23 @@
                         </tr>
                     @else
                         @foreach ($cat as $cate)
-                            <tr class="bg-secondary  text-center">
-                                <td colspan="4">
-                                    <h1 class="font-weight-bold h2 text-default">
-                                        <strong>
-                                            {{ ucwords($cate->name) }}
-                                        </strong>
-                                    </h1>
-                                </td>
-                            </tr>
+                            @if (isset($jmlmenu[$cate->id]))
+                                @if ($jmlmenu[$cate->id] != 0)
+                                    <tr class="bg-secondary  text-center">
+                                        <td colspan="4">
+                                            <h1 class="font-weight-bold h2 text-default">
+                                                <strong>
+                                                    {{ ucwords($cate->name) }}
+                                                </strong>
+                                            </h1>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endif
                             @php
                                 $no = 1;
                             @endphp
                             @foreach ($data as $item)
-                                @php
-                                    $i = 0;
-                                @endphp
                                 @if ($cate->name == $item->category_name)
                                     <tr>
                                         <td>{{ $no++ }}</td>
@@ -72,21 +73,9 @@
                                         </td>
                                         <td>{{ ucfirst(strtolower($item->description)) }}</td>
                                         <td>IDR {{ number_format($item->price, 0, ',', '.') }}</td>
-                                        @php
-                                            $i++;
-                                        @endphp
                                     </tr>
                                 @endif
                             @endforeach
-                            @if ($i == 0)
-                                <tr>
-                                    <td colspan="4">
-                                        <h2 class="font-weight-bold text-center">
-                                            Data Menu Kosong
-                                        </h2>
-                                    </td>
-                                </tr>
-                            @endif
                         @endforeach
                     @endif
                 </tbody>

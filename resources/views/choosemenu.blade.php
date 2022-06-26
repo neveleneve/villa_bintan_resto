@@ -46,18 +46,31 @@
                             </div>
                         </div>
                     @endif
-                    <form action="{{ route('reservemenu') }}" method="post">
+                    <form action="{{ route('reservemenu') }}" method="get">
                         {{ csrf_field() }}
                         <input type="hidden" name="id" value="{{ $id }}">
                         <div class="row mb-3">
-                            <div class="col-12 mb-1">
-                                <button class="btn btn-default btn-block">
-                                    Book Now!
-                                </button>
-                            </div>
+                            @if (!$telat)
+                                <div class="col-12 mb-1">
+                                    <button class="btn btn-default btn-block">
+                                        Book Now!
+                                    </button>
+                                </div>
+                            @endif
                             <div class="col-12">
-                                <strong>*Choose one of the menus so you won't be charged a table reservation fee
-                                </strong>
+                                @if ($telat)
+                                    <div class="alert alert-danger text-center" role="alert">
+                                        <h3>
+                                            <strong>Warning
+                                            </strong>
+                                            You're too late too booking a menu. Please Re-book your table on this <a
+                                                href="{{ route('reservation') }}">link</a>
+                                        </h3>
+                                    </div>
+                                @else
+                                    <strong>*Choose one of the menus so you won't be charged a table reservation fee
+                                    </strong>
+                                @endif
                             </div>
                         </div>
                         <div class="row">

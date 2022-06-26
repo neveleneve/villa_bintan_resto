@@ -25,7 +25,7 @@ Route::get('/reservation/barcode/{id}', 'GuestController@downloadbarcode')->name
 // fungsi input reservasi meja
 Route::post('/reserve', 'GuestController@reserve')->name('reserve');
 // fungsi input menu pilihan setelah reservasi meja
-Route::post('/reserve_menu', 'GuestController@reservemenu')->name('reservemenu');
+Route::get('/reserve_menu', 'GuestController@reservemenu')->name('reservemenu');
 
 Route::post('/payments/notification', 'PaymentsController@notification')->name('paymentsnotification');
 Route::get('/payments/finish', 'PaymentsController@finish')->name('paymentsfinish');

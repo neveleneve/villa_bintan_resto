@@ -60,20 +60,21 @@
                                     </tr>
                                 @else
                                     @foreach ($cat as $cate)
-                                        <tr class="bg-secondary">
-                                            <td colspan="5">
-                                                <h1 class="font-weight-bold h2 text-default">
-                                                    <strong>
-                                                        {{ ucwords($cate->name) }}
-                                                    </strong>
-                                                </h1>
-                                            </td>
-                                        </tr>
+                                        @if (isset($jmlmenu[$cate->id]))
+                                            @if ($jmlmenu[$cate->id] != 0)
+                                                <tr class="bg-secondary">
+                                                    <td colspan="5">
+                                                        <h1 class="font-weight-bold h2 text-default">
+                                                            <strong>
+                                                                {{ ucwords($cate->name) }}
+                                                            </strong>
+                                                        </h1>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        @endif
                                         @foreach ($menu as $item)
-                                            @php
-                                                $i = 0;
-                                            @endphp
-                                            @if ($cate->name == $item->category_name)
+                                            @if ($cate->id == $item->category_id)
                                                 <tr>
                                                     <td class="align-middle">
                                                         @if ($item->deleted_at == null)
@@ -120,20 +121,8 @@
                                                         @endif
                                                     </td>
                                                 </tr>
-                                                @php
-                                                    $i++;
-                                                @endphp
                                             @endif
                                         @endforeach
-                                        @if ($i == 0)
-                                            <tr>
-                                                <td colspan="5">
-                                                    <h2 class="font-weight-bold">
-                                                        Data Menu Kosong
-                                                    </h2>
-                                                </td>
-                                            </tr>
-                                        @endif
                                     @endforeach
                                 @endif
                             </tbody>
