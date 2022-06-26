@@ -13,11 +13,11 @@
                     <h1 class="text-center text-white font-weight-bold">Reservations</h1>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
+                    {{-- <div class="row mb-3">
                         <div class="col-4">
                             <input class="form-control" type="text" name="cari" id="cari" placeholder="Search...">
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="table-responsive">
                         <table class="table table-bordered text-center">
                             <thead class="bg-default text-white">
@@ -46,12 +46,12 @@
                                                 @if ($item->reservasistatus == 0)
                                                     <li
                                                         class="list-group-item d-flex justify-content-between align-items-center">
-                                                        Menu Not Reserved Yet {{-- keterangan 1 --}}
+                                                        Table Reserved. Menu Not Reserved Yet {{-- keterangan 1 --}}
                                                     </li>
                                                 @elseif($item->reservasistatus == 1)
                                                     <li
                                                         class="list-group-item d-flex justify-content-between align-items-center">
-                                                        Menu Reserved {{-- keterangan 1 --}}
+                                                        Table and Menu Reserved {{-- keterangan 1 --}}
                                                     </li>
                                                     @if ($item->jumlahpembayaran == 0)
                                                         <li
@@ -77,10 +77,15 @@
                                                         @endif
                                                     @endif
                                                 @endif
-                                                @if (($item->status_code != 200 || $item->jumlahpembayaran == 0) && date('Y-m-dH:i:s') > date('Y-m-d H:i:s', strtotime($item->reservationtime . '- 2 hours')))
+                                                @if ((($item->status_code != 200 || $item->jumlahpembayaran == 0) && date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($item->reservationtime . '- 2 hours'))) || $item->bookingstatus == 2)
                                                     <li
                                                         class="list-group-item d-flex justify-content-between align-items-center">
                                                         Expired reservation {{-- keterangan 3 --}}
+                                                    </li>
+                                                @elseif($item->bookingstatus == 1)
+                                                    <li
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
+                                                        Transaction Done {{-- keterangan 3 --}}
                                                     </li>
                                                 @endif
                                             </ul>
@@ -88,6 +93,12 @@
                                         <td class="align-middle">
                                             <a class="btn btn-sm btn-outline-default"
                                                 href="{{ route('adminreservationdetail', ['id' => $item->codereservation]) }}">Detail</a>
+                                            @if ($item->bookingstatus == 0)
+                                                <a class="btn btn-sm btn-outline-success"
+                                                    onclick="return confirm('Tandai reservasi telah selesai?')"
+                                                    href="{{ route('bookedin', ['id' => $item->codereservation]) }}">Booked
+                                                    In</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty

@@ -196,4 +196,62 @@ class AjaxController extends Controller
     {
         # code...
     }
+
+    public function reservationcheck(Request $ajax)
+    {
+        $payments = Payment::where('reservation_code', $ajax->id)
+            ->get();
+        $status_sebelum = $payments[0]->status_code;
+        $berubah = false;
+        $this->checkreservation();
+        foreach ($payments as $key) {
+            $endpoint = "https://api.sandbox.midtrans.com/v2/" . $key->order_id . "/status";
+            $client = new \GuzzleHttp\Client([
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic ' . base64_encode(env('MIDTRANS_SERVER_KEY')),
+                ]
+            ]);
+            $response = $client->request('GET', $endpoint);
+            $content = json_decode($response->getBody(), true);
+            if ($status_sebelum != $content['status_code']) {
+                $berubah = true;
+            }
+        }
+        $data = [
+            'berubah' => $berubah
+        ];
+        return Response($data);
+    }
+
+    public function checkreservation()
+    {
+        $payments = Payment::where('status_code', '<>', '200')
+            ->get();
+        foreach ($payments as $key) {
+            $endpoint = "https://api.sandbox.midtrans.com/v2/" . $key->order_id . "/status";
+            $client = new \GuzzleHttp\Client([
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic ' . base64_encode(env('MIDTRANS_SERVER_KEY')),
+                ]
+            ]);
+            $response = $client->request('GET', $endpoint);
+            $content = json_decode($response->getBody(), true);
+            if (isset($content['transaction_status'])) {
+                if ($key->transaction_status != $content['transaction_status']) {
+                    Payment::where('id', $key->id)->update([
+                        'transaction_status' => $content['transaction_status']
+                    ]);
+                }
+            }
+            if ($key->status_code != $content['status_code']) {
+                Payment::where('id', $key->id)->update([
+                    'status_code' => $content['status_code']
+                ]);
+            }
+        }
+    }
 }

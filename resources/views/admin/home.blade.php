@@ -16,25 +16,26 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="card text-center">
-                                <div class="card-header bg-primary text-white font-weight-bold">Reservation In Progress</div>
+                                <div class="card-header bg-default text-white font-weight-bold">Today Reservation</div>
                                 <div class="card-body">
-                                    You are logged in!
+                                    {{ $reservationtoday }} Reservation(s)
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="card text-center">
-                                <div class="card-header bg-primary text-white font-weight-bold">Completed Reservation</div>
+                                <div class="card-header bg-default text-white font-weight-bold">Today's Booking Preparation
+                                </div>
                                 <div class="card-body">
-                                    You are logged in!
+                                    {{ $bookingtoday }} Preparation(s)
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="card text-center">
-                                <div class="card-header bg-primary text-white font-weight-bold">Canceled Reservation</div>
+                                <div class="card-header bg-default text-white font-weight-bold">Completed Reservation</div>
                                 <div class="card-body">
-                                    You are logged in!
+                                    {{ $completedreservation }} Reservation(s)
                                 </div>
                             </div>
                         </div>

@@ -102,14 +102,12 @@
                                     Seat</button>
                             </div>
                         </div>
-                        {{-- <div class="row">
-                        </div> --}}
                         <div class="row mt-5" id="loading" style="display: none">
                             <div class="col text-center">
                                 <i id="spinner" style="display: none" class="fa fa-spinner fa-spin fa-4x"></i>
                             </div>
                         </div>
-                        <div class="row mt-5 mb-4" id="tabel">
+                        <div class="row mt-5 mb-4" id="tabel" style="display: none">
                             <div class="col-12 mb-3">
                                 <button type="submit" class="btn btn-default btn-block"
                                     onclick="return confirm('Book Now?')">Book

@@ -237,3 +237,28 @@
         </div>
     </div>
 @endsection
+
+@section('custjs')
+    <script>
+        $(document).ready(function() {
+            setInterval(function() {
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route('reservationcheck') }}',
+                    data: {
+                        'id': '{{ $id }}'
+                    },
+                    success: function(data) {
+                        if (data.berubah == true) {
+                            location.reload();
+                        }
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status);
+                    },
+                });
+                console.log('halo');
+            }, 1000);
+        });
+    </script>
+@endsection

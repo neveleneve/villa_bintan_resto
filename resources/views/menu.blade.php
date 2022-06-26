@@ -13,10 +13,9 @@
     <hr>
     <div class="row">
         <div class="col-12 table-responsive">
-            <table class="table table-bg table-hover">
+            <table class="table table-bg table-bordered table-hover">
                 <thead class="bg-default text-white">
                     <tr>
-                        <th>No</th>
                         <th>Name</th>
                         <th>Description</th>
                         <th>Price</th>
@@ -24,7 +23,7 @@
                 </thead>
                 <tbody>
                     @if (count($data) == 0)
-                        <tr class="bg-secondary  text-center">
+                        <tr class="bg-secondary text-center">
                             <td colspan="4">
                                 <h1 class="font-weight-bold h2 text-default">
                                     <strong>
@@ -48,13 +47,9 @@
                                     </tr>
                                 @endif
                             @endif
-                            @php
-                                $no = 1;
-                            @endphp
                             @foreach ($data as $item)
-                                @if ($cate->name == $item->category_name)
+                                @if ($cate->id == $item->category_id)
                                     <tr>
-                                        <td>{{ $no++ }}</td>
                                         <td>
                                             <div class="media align-items-center">
                                                 <a class="avatar rounded-circle mr-3">

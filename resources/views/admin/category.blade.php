@@ -14,10 +14,10 @@
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
-                        <div class="col-4">
+                        {{-- <div class="col-4">
                             <input class="form-control" type="text" name="cari" id="cari" placeholder="Search...">
-                        </div>
-                        <div class="col-8">
+                        </div> --}}
+                        <div class="col-12">
                             <button class="btn btn-outline-default btn-block" type="button" data-toggle="modal"
                                 data-target="#exampleModal1">
                                 Add Category
@@ -37,8 +37,8 @@
                                     <tr>
                                         <td class="align-middle">{{ ucfirst(strtolower($item->name)) }}</td>
                                         <td class="align-middle">
-                                            <button class="btn btn-sm btn-outline-default" type="button" data-toggle="modal"
-                                                data-target="#exampleModal"
+                                            <button class="btn btn-sm btn-outline-default" type="button"
+                                                data-toggle="modal" data-target="#exampleModal"
                                                 onclick="getData({{ $item->id }})">Edit</button>
                                         </td>
                                     </tr>
@@ -123,7 +123,7 @@
                 type: 'GET',
                 url: '{{ route('getcategorydata') }}',
                 data: {
-                    'id' : id,
+                    'id': id,
                 },
                 success: function(datax) {
                     $('#namakategori').val(datax.nama);

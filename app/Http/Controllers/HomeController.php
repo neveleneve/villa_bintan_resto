@@ -33,37 +33,26 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin.home');
+        $datareservasimasukhariini = Reservation::where('status', 1)
+            ->whereDate('created_at', date('Y-m-d'))
+            ->count();
+        $databookingmasukhariini = Reservation::where('status', 1)
+            ->whereDate('time', date('Y-m-d'))
+            ->count();
+        $completedreservation = Reservation::where('status', 1)
+            ->count();
+        return view('admin.home', [
+            'reservationtoday' => $datareservasimasukhariini,
+            'bookingtoday' => $databookingmasukhariini,
+            'completedreservation' => $completedreservation,
+        ]);
     }
 
     public function reservation()
     {
         // update data reservasi one by one
         $i = 0;
-        $datapayment = Payment::get();
-        foreach ($datapayment as $key) {
-            $endpoint = "https://api.sandbox.midtrans.com/v2/" . $key->order_id . "/status";
-            $client = new \GuzzleHttp\Client([
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Basic ' . base64_encode(env('MIDTRANS_SERVER_KEY')),
-                ]
-            ]);
-            $response = $client->request('GET', $endpoint);
-            $content = json_decode($response->getBody(), true);
-            if ($content['status_code'] != $key->status_code) {
-                if (isset($content['transaction_status'])) {
-                    Payment::where('order_id', $key->order_id)->update([
-                        'transaction_status' => $content['transaction_status']
-                    ]);
-                }
-                Payment::where('order_id', $key->order_id)->update([
-                    'status_code' => $content['status_code']
-                ]);
-            }
-            $i += 1;
-        }
+        $this->checkreservation();
         // proses tampil data
         $no = 1;
         $datareservasi = DB::select('SELECT
@@ -72,6 +61,7 @@ class HomeController extends Controller
         reservations.nama_pemesan AS pemesan,
         reservations.time AS reservationtime,
         reservations.STATUS AS reservasistatus,
+        reservations.reserved_status AS bookingstatus,
         `tables`.no_meja AS nomeja,
         ( SELECT COUNT( * ) FROM payments WHERE reservation_code = reservations.reservation_code ) AS jumlahpembayaran,
         ( SELECT order_id FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1 ) AS order_id,
@@ -79,7 +69,7 @@ class HomeController extends Controller
         FROM
         reservations
         JOIN `tables` ON `tables`.id = reservations.table_id 
-        ORDER BY id DESC');
+        ORDER BY reserved_status, time');
         return view('admin.reservation', [
             'datareservasi' => $datareservasi,
             'no' => $no,
@@ -122,6 +112,12 @@ class HomeController extends Controller
         ]);
     }
 
+    public function bookedin($id)
+    {
+        Reservation::where('reservation_code', $id)->update(['reserved_status' => 1]);
+        return redirect(route('adminreservation'));
+    }
+
     public function payments()
     {
         $datapayment = Payment::get();
@@ -135,6 +131,16 @@ class HomeController extends Controller
     {
         $payments = Payment::where('status_code', '<>', '200')
             ->get();
+        $reservation = Reservation::where('status', 1)
+            ->get();
+        foreach ($reservation as $key) {
+            if ($key->time < date('Y-m-d H:i:s', strtotime('-2 Hours'))) {
+                Reservation::where('id', $key->id)
+                    ->update([
+                        'reserved_status' => 2
+                    ]);
+            }
+        }
         foreach ($payments as $key) {
             $endpoint = "https://api.sandbox.midtrans.com/v2/" . $key->order_id . "/status";
             $client = new \GuzzleHttp\Client([

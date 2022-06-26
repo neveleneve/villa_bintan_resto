@@ -22,7 +22,7 @@ class GuestController extends Controller
     {
         $data = DB::table('menus')
             ->join('menu_categories', 'menus.id_category', '=', 'menu_categories.id')
-            ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.name as category_name')
+            ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.id as category_id')
             ->where('menus.deleted_at', null)
             ->orderBy('menu_categories.name')
             ->get();
@@ -96,33 +96,47 @@ class GuestController extends Controller
     {
         $check = Reservation::where('reservation_code', $id)->get();
         $statustelat = false;
-        if ($check[0]->status == 0 && date('Y-m-dH:i:s') > date('Y-m-d H:i:s', strtotime($check[0]->created_at . '- 2 hours'))) {
-            $statustelat = true;
-        }
         if (count($check) == 0) {
-            return redirect(route('reservation'))->with('alert', 'Reservation code is not exist!');
+            return redirect(route('reservation'));
         } else {
-            if ($check[0]['status'] == 0) {
-                $data = DB::table('menus')
-                    ->join('menu_categories', 'menus.id_category', '=', 'menu_categories.id')
-                    ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.name as category_name')
-                    ->where('menus.deleted_at', null)
-                    ->orderBy('menu_categories.name')
-                    ->get();
-                return view('choosemenu', [
-                    'data' => $data,
-                    'id' => $id,
-                    'telat' => $statustelat,
-                ]);
-            } elseif ($check[0]['status'] == 1) {
-                return redirect(route('reservationdetail', [
-                    'id' => $id,
-                ]));
+            if ($check[0]->status == 0 && date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($check[0]->time . '- 2 hours'))) {
+                $statustelat = true;
+            }
+            if (count($check) == 0) {
+                return redirect(route('reservation'))->with('alert', 'Reservation code is not exist!');
+            } else {
+                if ($check[0]['status'] == 0) {
+                    $data = DB::table('menus')
+                        ->join('menu_categories', 'menus.id_category', '=', 'menu_categories.id')
+                        ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.id as category_id')
+                        ->where('menus.deleted_at', null)
+                        ->orderBy('menu_categories.name')
+                        ->get();
+                    $cat = MenuCategory::orderBy('name')
+                        ->get();
+                    $jmlmenupercat = DB::select(DB::raw('SELECT c.id, COUNT( s.NAME ) AS menucount FROM menu_categories c JOIN menus s ON c.id = s.id_category GROUP BY c.id'));
+                    $datamenu = [];
+                    foreach ($jmlmenupercat as $key) {
+                        $datamenu[$key->id] = $key->menucount;
+                    }
+                    return view('choosemenu', [
+                        'data' => $data,
+                        'cat' => $cat,
+                        'jmlmenu' => $datamenu,
+                        'id' => $id,
+                        'telat' => $statustelat,
+                    ]);
+                } elseif ($check[0]['status'] == 1) {
+                    return redirect(route('reservationdetail', [
+                        'id' => $id,
+                    ]));
+                }
             }
         }
     }
     public function reservemenu(Request $data)
     {
+        // dd($data->all());
         // kode reservasi
         $reservation_code = $data->id;
         // data pesanan
