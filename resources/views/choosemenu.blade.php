@@ -134,7 +134,7 @@
 
                                                             </td>
                                                             <td>{{ ucfirst(strtolower($item->description)) }}</td>
-                                                            <td>IDR {{ number_format($item->price, 0, ',', '.') }}</td>
+                                                            <td>Rp. {{ number_format($item->price, 0, ',', '.') }}</td>
                                                             <td>
                                                                 <div class="input-group inline-group">
                                                                     <div class="input-group-prepend">

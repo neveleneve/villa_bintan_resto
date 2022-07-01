@@ -116,7 +116,7 @@ class AjaxController extends Controller
                 </td>
                 <td class="align-middle">' . ucfirst($key->description) . '</td>
                 <td class="align-middle">' . ucfirst($key->category_name) . '</td>
-                <td class="align-middle">' . number_format($key->price, 0, ',', '.') . ' <strong>IDR</strong></td>
+                <td class="align-middle"><strong>Rp. </strong>' . number_format($key->price, 0, ',', '.') . '</td>
                 <td class="align-middle">' . $status . '</td>
                 <td class="align-middle">
                 <input type="hidden" name="id_menu" value="' . $key->id . '">

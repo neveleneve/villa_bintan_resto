@@ -82,12 +82,12 @@
                                             <td>{{ $item->name }}</td>
                                             <td>{{ $item->jumlah }}</td>
                                             <td class="text-right">
+                                                <strong>Rp. </strong>
                                                 {{ number_format($item->harga, 0, ',', '.') }}
-                                                <strong>IDR</strong>
                                             </td>
                                             <td class="text-right">
+                                                <strong>Rp. </strong>
                                                 {{ number_format($item->harga * $item->jumlah, 0, ',', '.') }}
-                                                <strong>IDR</strong>
                                             </td>
                                             @php
                                                 $total += $item->harga * $item->jumlah;
@@ -107,8 +107,8 @@
                                             <td colspan="4" class="text-right font-weight-bold"><strong>Total</strong>
                                             </td>
                                             <td class="text-right">
+                                                <strong>Rp. </strong>
                                                 {{ number_format($total, 0, ',', '.') }}
-                                                <strong>IDR</strong>
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -123,8 +123,8 @@
                                 </div>
                                 <div class="col-6">
                                     <p class="text-right">
+                                        <strong class="font-weight-bold">Rp. </strong>
                                         {{ number_format($total, 0, ',', '.') }}
-                                        <strong class="font-weight-bold">IDR</strong>
                                     </p>
                                 </div>
                             </div>
@@ -134,8 +134,8 @@
                                 </div>
                                 <div class="col-6" style="border-bottom: 1px solid">
                                     <p class="text-right">
+                                        <strong class="font-weight-bold">Rp. </strong>
                                         {{ number_format($reservation_fee_data[0]['fee'], 0, ',', '.') }}
-                                        <strong class="font-weight-bold">IDR</strong>
                                     </p>
                                 </div>
                             </div>
@@ -145,8 +145,8 @@
                                 </div>
                                 <div class="col-6">
                                     <p class="text-right">
+                                        <strong class="font-weight-bold">Rp.</strong>
                                         {{ number_format($total + $reservation_fee_data[0]['fee'], 0, ',', '.') }}
-                                        <strong class="font-weight-bold">IDR</strong>
                                     </p>
                                 </div>
                             </div>

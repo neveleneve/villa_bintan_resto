@@ -102,8 +102,8 @@
                                                     <td class="align-middle">{{ ucfirst(strtolower($item->description)) }}
                                                     </td>
                                                     <td class="align-middle">
+                                                        <strong>Rp. </strong>
                                                         {{ number_format($item->price, 0, ',', '.') }}
-                                                        <strong>IDR</strong>
                                                     </td>
                                                     <td class="align-middle">
                                                         <input type="hidden" name="id_menu" value="{{ $item->id }}">
@@ -175,7 +175,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
                                     <strong>
-                                        IDR
+                                        Rp.
                                     </strong>
                                 </span>
                             </div>
