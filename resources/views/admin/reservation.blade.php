@@ -93,7 +93,7 @@
                                         <td class="align-middle">
                                             <a class="btn btn-sm btn-outline-default"
                                                 href="{{ route('adminreservationdetail', ['id' => $item->codereservation]) }}">Detail</a>
-                                            @if ($item->bookingstatus == 0)
+                                            @if ($item->status_code == 200 && $item->bookingstatus == 0)
                                                 <a class="btn btn-sm btn-outline-success"
                                                     onclick="return confirm('Tandai reservasi telah selesai?')"
                                                     href="{{ route('bookedin', ['id' => $item->codereservation]) }}">Booked
