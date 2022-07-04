@@ -219,13 +219,15 @@ class GuestController extends Controller
                 ->get();
             // cek data pembayaran
             $datapayment = Payment::where('reservation_code', $id)->orderBy('created_at', 'DESC')->get();
+            // $paymentUrl = null;
+            // $random = null;
             if (date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($reservationstatus[0]['time'] . '- 2 hours'))) {
                 if (count($datapayment) > 0) {
                     $paymentUrl = $datapayment[0]['url'];
                     $random = $datapayment[0]['order_id'];
                 } else {
                     $paymentUrl = null;
-                    $random = 'null';
+                    $random = null;
                 }
             } else {
                 if ((count($datapayment) == 0) || ($datapayment[0]['status_code'] == "407")) {

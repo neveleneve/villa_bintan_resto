@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <hr>
-                    @if ($payment_data['status_code'] == 200)
+                    @if ($payment_data['status_code'] == '200')
                         <div class="row mb-3">
                             <div class="col-2">
                                 <label class="font-weight-bold">Order ID</label>
@@ -53,13 +53,13 @@
                                 <label>{{ ucwords(str_replace('_', ' ', $payment_data['payment_type'])) }}</label>
                             </div>
                             <div class="col-2">
-                                <label class="font-weight-bold">Payment Media</label>
+                                <label class="font-weight-bold">Payment Date</label>
                             </div>
                             <div class="col-1">
                                 <label>:</label>
                             </div>
                             <div class="col-3">
-                                <label>{{ strtoupper($payment_data['va_numbers'][0]['bank']) }}</label>
+                                <label>{{ date('d M Y, H:i:s', strtotime($payment_data['settlement_time'])) }}</label>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -72,15 +72,6 @@
                             <div class="col-3">
                                 <label><strong>Rp.
                                     </strong>{{ number_format($payment_data['gross_amount'], 0, ',', '.') }}</label>
-                            </div>
-                            <div class="col-2">
-                                <label class="font-weight-bold">Payment Date</label>
-                            </div>
-                            <div class="col-1">
-                                <label>:</label>
-                            </div>
-                            <div class="col-3">
-                                <label>{{ date('d M Y, H:i:s', strtotime($payment_data['settlement_time'])) }}</label>
                             </div>
                         </div>
                     @else

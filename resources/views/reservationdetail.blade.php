@@ -211,7 +211,7 @@
                                 @php
                                     $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
                                     if (!File::exists(public_path('images/barcode/' . $id . '.png'))) {
-                                        file_put_contents('images/barcode/' . $id . '.png', $generator->getBarcode($id, $generator::TYPE_CODE_128, 3, 50, [0, 0, 0]));
+                                        file_put_contents('images/barcode/' . $id . '.png', $generator->getBarcode($id, $generator::TYPE_CODE_39, 3, 50, [0, 0, 0]));
                                     }
                                     if (!File::exists(public_path('images/scan_barcode/' . $id . '.png'))) {
                                         $src = imagecreatefrompng(asset('images/barcode/' . $id . '.png'));

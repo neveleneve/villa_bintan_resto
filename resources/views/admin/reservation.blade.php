@@ -111,6 +111,11 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            {{ $datareservasi->onEachSide(1)->links('layouts.bootstrap-4') }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -51,25 +51,26 @@ class HomeController extends Controller
     public function reservation()
     {
         // update data reservasi one by one
-        $i = 0;
         $this->checkreservation();
-        // proses tampil data
         $no = 1;
-        $datareservasi = DB::select('SELECT
-        reservations.id AS id,
-        reservations.reservation_code AS codereservation,
-        reservations.nama_pemesan AS pemesan,
-        reservations.time AS reservationtime,
-        reservations.STATUS AS reservasistatus,
-        reservations.reserved_status AS bookingstatus,
-        `tables`.no_meja AS nomeja,
-        ( SELECT COUNT( * ) FROM payments WHERE reservation_code = reservations.reservation_code ) AS jumlahpembayaran,
-        ( SELECT order_id FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1 ) AS order_id,
-        ( SELECT status_code FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1 ) AS status_code 
-        FROM
-        reservations
-        JOIN `tables` ON `tables`.id = reservations.table_id 
-        ORDER BY reserved_status, time');
+        $datareservasi = DB::table('reservations')
+            ->select([
+                'reservations.id AS id',
+                'reservations.reservation_code as codereservation',
+                'reservations.nama_pemesan AS pemesan',
+                'reservations.time AS reservationtime',
+                'reservations.STATUS AS reservasistatus',
+                'reservations.reserved_status AS bookingstatus',
+                'tables.no_meja AS nomeja',
+                DB::raw('(SELECT COUNT( * ) FROM payments WHERE reservation_code = reservations.reservation_code) AS jumlahpembayaran'),
+                DB::raw('(SELECT order_id FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS order_id'),
+                DB::raw('(SELECT status_code FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS status_code')
+            ])
+            ->join('tables', 'tables.id', '=', 'reservations.table_id')
+            ->orderBy('reservations.reserved_status')
+            ->orderBy('reservations.time')
+            ->orderBy('status_code')
+            ->paginate(5);
         return view('admin.reservation', [
             'datareservasi' => $datareservasi,
             'no' => $no,
@@ -120,7 +121,7 @@ class HomeController extends Controller
 
     public function payments()
     {
-        $datapayment = Payment::get();
+        $datapayment = Payment::orderBy('id', 'desc')->paginate(10);
         $this->checkreservation();
         return view('admin.payment', [
             'payments' => $datapayment
@@ -298,7 +299,6 @@ class HomeController extends Controller
         return view('admin.paymentstatus', [
             'payment_data' => $content
         ]);
-        dd($content);
         // return view('admin.paymentstatus', [
         //     'payment_data' => $content
         // ]);
