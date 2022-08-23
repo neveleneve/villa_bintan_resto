@@ -56,7 +56,7 @@ class BarcodeGeneratorPNG extends BarcodeGenerator
 
         if ($this->useImagick) {
             $imagickBarsShape = new imagickdraw();
-            $imagickBarsShape->setFillColor(new imagickpixel('rgb(' . implode(',', $foregroundColor) . ')'));
+            $imagickBarsShape->setFillColor(new imagickpixel('rgb(' . implode(',', $foregroundColor) .')'));
         } else {
             $image = $this->createGdImageObject($width, $height);
             $gdForegroundColor = imagecolorallocate($image, $foregroundColor[0], $foregroundColor[1], $foregroundColor[2]);
@@ -97,9 +97,8 @@ class BarcodeGeneratorPNG extends BarcodeGenerator
     {
         $image = imagecreate($width, $height);
         $colorBackground = imagecolorallocate($image, 255, 255, 255);
-        // imagecolortransparent($image, $colorBackground);
-        // $fontcolor = imagecolorallocate($image, 255, 255, 255);
-        // imagestring($image, 50, 2, 1, "Scan Here", $fontcolor);
+        imagecolortransparent($image, $colorBackground);
+
         return $image;
     }
 

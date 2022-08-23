@@ -13,11 +13,12 @@
                     <h1 class="text-center text-white font-weight-bold">Reservations</h1>
                 </div>
                 <div class="card-body">
-                    {{-- <div class="row mb-3">
+                    <div class="row mb-3">
                         <div class="col-4">
-                            <input class="form-control" type="text" name="cari" id="cari" placeholder="Search...">
+                            <input class="form-control" type="text" name="cari" id="cari" placeholder="Search..."
+                                oninput="search(this.value)">
                         </div>
-                    </div> --}}
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered text-center">
                             <thead class="bg-default text-white">
@@ -77,7 +78,9 @@
                                                         @endif
                                                     @endif
                                                 @endif
-                                                @if ((($item->status_code != 200 || $item->jumlahpembayaran == 0) && date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($item->reservationtime . '- 2 hours'))) || $item->bookingstatus == 2)
+                                                @if ((($item->status_code != 200 || $item->jumlahpembayaran == 0) &&
+                                                    date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($item->reservationtime . '- 2 hours'))) ||
+                                                    $item->bookingstatus == 2)
                                                     <li
                                                         class="list-group-item d-flex justify-content-between align-items-center">
                                                         Expired reservation {{-- keterangan 3 --}}
@@ -98,23 +101,22 @@
                                                     onclick="return confirm('Tandai reservasi telah selesai?')"
                                                     href="{{ route('bookedin', ['id' => $item->codereservation]) }}">Booked
                                                     In</a>
+                                            @elseif ($item->bookingstatus == 1)
+                                                <a class="btn btn-sm btn-outline-warning" target="__blank"
+                                                    href="{{ route('adminprintstruk', ['id' => $item->codereservation]) }}">Print
+                                                    Struk</a>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="7">
-                                            <h4>Reservation Data is Empty</h4>
+                                            <h4>Data reservasi kosong</h4>
                                         </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            {{ $datareservasi->onEachSide(1)->links('layouts.bootstrap-4') }}
-                        </div>
                     </div>
                 </div>
             </div>

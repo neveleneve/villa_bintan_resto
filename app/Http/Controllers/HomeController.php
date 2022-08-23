@@ -7,12 +7,10 @@ use App\MenuCategory;
 use App\Payment;
 use App\Reservation;
 use App\ReservedFee;
-use App\ReservedMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Redirect;
+use \PDF;
 
 class HomeController extends Controller
 {
@@ -70,7 +68,7 @@ class HomeController extends Controller
             ->orderBy('reservations.reserved_status')
             ->orderBy('reservations.time')
             ->orderBy('status_code')
-            ->paginate(5);
+            ->get();
         return view('admin.reservation', [
             'datareservasi' => $datareservasi,
             'no' => $no,
@@ -121,7 +119,7 @@ class HomeController extends Controller
 
     public function payments()
     {
-        $datapayment = Payment::orderBy('id', 'desc')->paginate(10);
+        $datapayment = Payment::orderBy('id', 'desc')->get();
         $this->checkreservation();
         return view('admin.payment', [
             'payments' => $datapayment
@@ -302,5 +300,121 @@ class HomeController extends Controller
         // return view('admin.paymentstatus', [
         //     'payment_data' => $content
         // ]);
+    }
+
+    public function report()
+    {
+        return view('admin.report');
+    }
+
+    public function postreport(Request $req)
+    {
+        return redirect(route('adminreportpreview', [
+            'bulan' => $req->bulan,
+            'tahun' => $req->tahun,
+        ]));
+    }
+
+    public function reportpreview(Request $req)
+    {
+        $datareservasi = DB::select('SELECT
+            id, reservation_code, nama_pemesan, time,
+            (SELECT SUM(harga * jumlah) FROM reserved_menus WHERE reservation_code = reservations.reservation_code) as totalmenu,
+            (SELECT SUM(fee) FROM reserved_fees WHERE reservation_code = reservations.reservation_code) as totalfee
+        FROM
+            reservations 
+        WHERE
+            YEAR ( time ) = "' . $req->tahun . '"
+            AND MONTH ( time ) = "' . $req->bulan . '"
+        ORDER BY time');
+        $pdf = PDF::loadView('admin.reportpreview', [
+            'data' => $datareservasi,
+            'tahun' => $req->tahun,
+            'bulan' => $this->bulan($req->bulan)
+        ])
+            ->setPaper('A4', 'landscape');
+        return $pdf->stream('Laporan Pemasukan Restoran.pdf');
+    }
+
+    public function strukprint($id)
+    {
+        $datareservasi = DB::select('SELECT
+        reservations.id AS id,
+        reservations.reservation_code AS codereservation,
+        reservations.nama_pemesan AS pemesan,
+        reservations.kontak AS kontak,
+        reservations.time AS reservationtime,
+        reservations.STATUS AS reservasistatus,
+        `tables`.no_meja AS nomeja,
+        ( SELECT COUNT( * ) FROM payments WHERE reservation_code = reservations.reservation_code ) AS jumlahpembayaran,
+        ( SELECT order_id FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1 ) AS order_id,
+        ( SELECT status_code FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1 ) AS status_code 
+        FROM reservations JOIN `tables` ON `tables`.id = reservations.table_id where reservations.reservation_code =  "' . $id . '" ORDER BY id DESC');
+
+        $datafee = ReservedFee::where('reservation_code', $id)
+            ->get();
+
+        $menu = DB::table('reserved_menus')
+            ->join('menus', 'reserved_menus.menu_id', '=', 'menus.id')
+            ->select([
+                'menus.id',
+                'menus.name',
+                'reserved_menus.harga',
+                'reserved_menus.jumlah'
+            ])
+            ->where('reserved_menus.reservation_code', $id)
+            ->get();
+
+        $pdf = PDF::loadView('admin.strukpreview', [
+            'datareservasi' => $datareservasi,
+            'datafee' => $datafee,
+            'datamenu' => $menu,
+            'id' => $id,
+        ])
+            ->setPaper('A4', 'landscape');
+        return $pdf->stream('Struk Pemesanan ' . $id . '.pdf');
+    }
+
+    public function bulan($id)
+    {
+        switch ($id) {
+            case '1':
+                $namabulan = 'Januari';
+                break;
+            case '2':
+                $namabulan = 'Februari';
+                break;
+            case '3':
+                $namabulan = 'Maret';
+                break;
+            case '4':
+                $namabulan = 'April';
+                break;
+            case '5':
+                $namabulan = 'Mei';
+                break;
+            case '6':
+                $namabulan = 'Juni';
+                break;
+            case '7':
+                $namabulan = 'Juli';
+                break;
+            case '8':
+                $namabulan = 'Agustus';
+                break;
+            case '9':
+                $namabulan = 'September';
+                break;
+            case '10':
+                $namabulan = 'Oktober';
+                break;
+            case '11':
+                $namabulan = 'November';
+                break;
+            case '12':
+                $namabulan = 'Desember';
+                break;
+        }
+        return $namabulan;
     }
 }

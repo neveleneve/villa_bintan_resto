@@ -194,7 +194,88 @@ class AjaxController extends Controller
 
     public function reservationssearch(Request $ajax)
     {
-        # code...
+        $data = null;
+        if ($ajax->ajax()) {
+            if ($ajax->key != null || $ajax->key != '') {
+                $datareservasi = DB::table('reservations')
+                    ->select([
+                        'reservations.id AS id',
+                        'reservations.reservation_code as codereservation',
+                        'reservations.nama_pemesan AS pemesan',
+                        'reservations.time AS reservationtime',
+                        'reservations.STATUS AS reservasistatus',
+                        'reservations.reserved_status AS bookingstatus',
+                        'tables.no_meja AS nomeja',
+                        DB::raw('(SELECT COUNT( * ) FROM payments WHERE reservation_code = reservations.reservation_code) AS jumlahpembayaran'),
+                        DB::raw('(SELECT order_id FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS order_id'),
+                        DB::raw('(SELECT status_code FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS status_code')
+                    ])
+                    ->join('tables', 'tables.id', '=', 'reservations.table_id')
+                    ->orderBy('reservations.reserved_status')
+                    ->orderBy('reservations.time')
+                    ->orderBy('status_code')
+                    ->where('reservations.reservation_code', 'LIKE', '%' . $ajax->key . '%')
+                    ->orWhere('reservations.nama_pemesan', 'LIKE', '%' . $ajax->key . '%')
+                    ->get();
+            } else {
+                $datareservasi = DB::table('reservations')
+                    ->select([
+                        'reservations.id AS id',
+                        'reservations.reservation_code as codereservation',
+                        'reservations.nama_pemesan AS pemesan',
+                        'reservations.time AS reservationtime',
+                        'reservations.STATUS AS reservasistatus',
+                        'reservations.reserved_status AS bookingstatus',
+                        'tables.no_meja AS nomeja',
+                        DB::raw('(SELECT COUNT( * ) FROM payments WHERE reservation_code = reservations.reservation_code) AS jumlahpembayaran'),
+                        DB::raw('(SELECT order_id FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS order_id'),
+                        DB::raw('(SELECT status_code FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS status_code')
+                    ])
+                    ->join('tables', 'tables.id', '=', 'reservations.table_id')
+                    ->orderBy('reservations.reserved_status')
+                    ->orderBy('reservations.time')
+                    ->orderBy('status_code')
+                    ->get();
+            }
+            if (count($datareservasi) > 0) {
+                foreach ($datareservasi as $key => $val) {
+                    $data .= '<tr>
+                    <td class="align-middle">
+                        ' . ($key + 1) . '
+                    </td>
+                    <td class="align-middle">
+                        ' . $val->codereservation . '
+                    </td>
+                    <td class="align-middle">
+                    ' . date('d/m/Y H:i', strtotime($val->reservationtime))  . '
+                    </td>
+                    <td class="align-middle">
+                        ' . $val->nomeja . '
+                    </td>
+                    <td class="align-middle">
+                        ' . $val->pemesan . '
+                    </td>
+                    <td class="text-left align-middle">
+                        <ul class="list-group">
+                            ' . $this->reservationStatus($val) . '
+                        </ul>
+                    </td>
+                    <td class="align-middle">
+                        ' . '<a class="btn btn-sm btn-outline-default"
+                        href="' . route("adminreservationdetail", ["id" => $val->codereservation]) . '">Detail</a>' . $this->actions($val) . '
+                    </td>
+                    </tr>';
+                }
+            } else {
+                $data = '<tr>
+                <td colspan="7">
+                <h1 class="text-center">Data reservasi kosong</h1>
+                </td>
+                </tr>';
+            }
+
+            return Response($data);
+        }
     }
 
     public function reservationcheck(Request $ajax)
@@ -253,5 +334,47 @@ class AjaxController extends Controller
                 ]);
             }
         }
+    }
+
+    public function reservationStatus($data)
+    {
+        $add = null;
+        if ($data->reservasistatus == 0) {
+            $add .= '<liclass="list-group-item d-flex justify-content-between align-items-center">Table Reserved. Menu Not Reserved Yet</li>';
+        } elseif ($data->reservasistatus == 1) {
+            $add .= '<li class="list-group-item d-flex justify-content-between align-items-center">Table and Menu Reserved</li>';
+        }
+        if ($data->jumlahpembayaran == 0) {
+            $add .= '<li class="list-group-item d-flex justify-content-between align-items-center">Payments not initiated</li>';
+        } elseif ($data->jumlahpembayaran > 0)
+            if ($data->status_code == 200) {
+                $add .= ' <li class="list-group-item d-flex justify-content-between align-items-center">Payment succeed</li>';
+            } elseif ($data->status_code == 404) {
+                $add .= '<li class="list-group-item d-flex justify-content-between align-items-center">Payment process is pending</li>';
+            } elseif ($data->status_code == 407) {
+                $add .= '<li class="list-group-item d-flex justify-content-between align-items-center">Payment is expired</li>';
+            }
+        if ((($data->status_code != 200 || $data->jumlahpembayaran == 0)     && date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($data->reservationtime . '- 2 hours'))) || $data->bookingstatus == 2) {
+            $add .= '<li class="list-group-item d-flex justify-content-between align-items-center">Expired reservation</li>';
+        } elseif ($data->bookingstatus == 1) {
+            $add .= '<li class="list-group-item d-flex justify-content-between align-items-center">Transaction Done</li>';
+        }
+        return $add;
+    }
+
+    public function actions($data)
+    {
+        $add = null;
+        if ($data->status_code == 200 && $data->bookingstatus == 0) {
+            $add .= '<a class="btn btn-sm btn-outline-success" onclick="return confirm(\'Tandai reservasi telah selesai?\')" 
+            href="' . route("bookedin", ["id" => $data->codereservation]) . '">
+            Booked In
+            </a>';
+        } else if ($data->bookingstatus == 1) {
+            $add .= '<a target="__blank" class="btn btn-sm btn-outline-warning" href="' . route("adminprintstruk", ["id" => $data->codereservation]) . '">
+            Booked In
+            </a>';
+        }
+        return $add;
     }
 }

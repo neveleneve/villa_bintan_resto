@@ -60,7 +60,7 @@
                                 <label for="tanggal" class="font-weight-bold">Reservation Date</label>
                                 <input class="form-control" type="date" name="tanggal" id="tanggal"
                                     value="{{ Session::has('tanggal') ? session('tanggal') : date('Y-m-d', strtotime(date(now()) . '+1 days')) }}"
-                                    placeholder="Select date..." min="{{ date('Y-m-d') }}">
+                                    placeholder="Select date..." min="{{ date('Y-m-d', strtotime(date(now()) . '+1 days')) }}">
                             </div>
                             <div class="col-3">
                                 <label for="waktu" class="font-weight-bold">Reservation Time</label>

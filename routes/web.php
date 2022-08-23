@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Milon\Barcode\DNS1D;
@@ -46,6 +47,7 @@ Route::get('/reservations', 'HomeController@reservation')->name('adminreservatio
 Route::get('/reservation/detail/{id}', 'HomeController@reservationdetail')->name('adminreservationdetail');
 Route::get('/reservations/search', 'AjaxController@reservationssearch')->name('adminreservationssearch');
 Route::get('/reservations/bookedin/{id}', 'HomeController@bookedin')->name('bookedin');
+Route::get('/struk/preview/{id}', 'HomeController@strukprint')->name('adminprintstruk');
 
 Route::get('/payments', 'HomeController@payments')->name('adminpayments');
 Route::get('/payments/search', 'AjaxController@paymentssearch')->name('adminpaymentssearch');
@@ -63,3 +65,7 @@ Route::get('/categories', 'HomeController@categories')->name('admincategories');
 Route::post('/categories/add', 'HomeController@addcategories')->name('adminaddcategories');
 Route::post('/categories/edit', 'HomeController@editcategories')->name('admineditcategories');
 Route::get('/categories/view', 'AjaxController@getDataCategory')->name('getcategorydata');
+
+Route::get('/report', 'HomeController@report')->name('adminreport');
+Route::post('/report', 'HomeController@postreport')->name('adminreportpost');
+Route::get('/report/preview', 'HomeController@reportpreview')->name('adminreportpreview');
