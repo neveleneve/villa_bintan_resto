@@ -13,17 +13,19 @@
                     <h1 class="text-center text-white font-weight-bold">Payments</h1>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-4">
-                            <input class="form-control" type="text" name="cari" id="cari"
-                                placeholder="Search reservation code or order ID" oninput="search(this.value)">
+                    @if (Auth::user()->role == 0)
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <input class="form-control" type="text" name="cari" id="cari"
+                                    placeholder="Search reservation code or order ID" oninput="search(this.value)">
+                            </div>
+                            <div class="col-4"></div>
+                            <div class="col-4">
+                                <input type="button" value="Refresh Page" onClick="confirmrefresh()"
+                                    class="btn btn-outline-default btn-block">
+                            </div>
                         </div>
-                        <div class="col-4"></div>
-                        <div class="col-4">
-                            <input type="button" value="Refresh Page" onClick="confirmrefresh()"
-                                class="btn btn-outline-default btn-block">
-                        </div>
-                    </div>
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-bordered text-center">
                             <thead class="bg-default text-white">
@@ -76,31 +78,34 @@
         </div>
     </div>
 @endsection
-
-@section('custjs')
-    <script>
-        function search(key) {
-            var tabelbody = $('#tablemenu');
-            $.ajax({
-                type: 'GET',
-                url: '{{ route('adminpaymentssearch') }}',
-                data: {
-                    'key': key
-                },
-                success: function(data) {
-                    tabelbody.empty();
-                    tabelbody.html(data);
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    alert(xhr.status);
-                },
-            });
-        }
-
-        function confirmrefresh() {
-            if (confirm('Refresh page?')) {
-                document.location.reload(true);
+@if (Auth::user()->role == 0)
+    @section('custjs')
+        <script>
+            function search(key) {
+                var tabelbody = $('#tablemenu');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route('adminpaymentssearch') }}',
+                    data: {
+                        'key': key,
+                        'role': '{{ Auth::user()->role }}',
+                        'id': '{{ Auth::user()->id }}',
+                    },
+                    success: function(data) {
+                        tabelbody.empty();
+                        tabelbody.html(data);
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status);
+                    },
+                });
             }
-        }
-    </script>
-@endsection
+
+            function confirmrefresh() {
+                if (confirm('Refresh page?')) {
+                    document.location.reload(true);
+                }
+            }
+        </script>
+    @endsection
+@endif

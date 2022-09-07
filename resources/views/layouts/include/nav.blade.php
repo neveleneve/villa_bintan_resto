@@ -22,18 +22,21 @@
                         Menu
                     </a>
                 </li>
-                {{-- <li class="nav-item">
-                    <a href="{{ route('about') }}" class="nav-link {{ Request::is('about') ? 'active' : null }} font-weight-bold">
-                        About Us
-                    </a>
-                </li> --}}
-                <li class="nav-item">
-                    <a href="{{ route('home') }}"
-                        class="nav-link {{ Request::is('login') || Request::is('dashboard') || Request::is('reservations') ? 'active' : null }} font-weight-bold">
-                        Administrator
-                    </a>
-                </li>
                 @auth
+                    @if (Auth::user()->role == 1)
+                        <li class="nav-item">
+                            <a href="{{ route('reservation') }}"
+                                class="nav-link {{ Request::is('reservation') ? 'active' : null }} font-weight-bold">
+                                Table Reservation
+                            </a>
+                        </li>
+                    @endif
+                    <li class="nav-item">
+                        <a href="{{ route('home') }}"
+                            class="nav-link {{ Request::is('login') || Request::is('dashboard') || Request::is('reservations') ? 'active' : null }} font-weight-bold">
+                            User Page
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="post">
                             {{ csrf_field() }}
@@ -46,9 +49,15 @@
                     </li>
                 @else
                     <li class="nav-item">
-                        <a href="{{ route('reservation') }}"
+                        <a href="{{ route('login') }}"
                             class="nav-link font-weight-bold btn btn-secondary btn-block text-default">
-                            Table Reservation
+                            Log In
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('register') }}"
+                            class="nav-link font-weight-bold btn btn-outline-secondary btn-block text-white ml-0 ml-lg-2">
+                            Register
                         </a>
                     </li>
                 @endauth

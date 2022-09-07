@@ -39,17 +39,6 @@
                     </div>
                     <div class="row">
                         <div class="col-2">
-                            <label class="font-weight-bold">Table ID</label>
-                        </div>
-                        <div class="col-1">
-                            :
-                        </div>
-                        <div class="col-3">
-                            {{ $reservation_data[0]['table_id'] }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-2">
                             <label class="font-weight-bold">Date & Time</label>
                         </div>
                         <div class="col-1">
@@ -62,12 +51,38 @@
                     <hr class="my-3">
                     <div class="row">
                         <div class="col-8">
+                            <h1 class="h1 fw-bold">Tabel Meja Pesanan</h1>
+                            <table class="table table-bordered table-hover align-items-center text-center mb-3">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nomor Meja</th>
+                                        <th>Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($reservation_data as $item)
+                                        <tr>
+                                            <td>{{ $loop->index + 1 }}</td>
+                                            <td>{{ $item->no_meja }}</td>
+                                            <td>{{ $item->kapasitas }} Orang</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3">
+                                                <h5 class="font-weight-bold">Table Reservation is Empty</h5>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                            <h1 class="h1 fw-bold">Tabel Menu Pesanan</h1>
                             <table class="table table-bordered table-hover align-items-center text-center">
                                 <thead class="thead-light">
                                     <tr>
                                         <th>No</th>
-                                        <th>Name</th>
-                                        <th>Quantity</th>
+                                        <th>Nama</th>
+                                        <th>Qty</th>
                                         <th class="text-right">Price</th>
                                         <th class="text-right">Sub Total</th>
                                     </tr>

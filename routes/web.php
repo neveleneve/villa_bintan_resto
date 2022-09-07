@@ -15,18 +15,25 @@ Route::get('/', function () {
 Route::get('/menu', 'GuestController@menu')->name('menu');
 // route ke tampilan tentang villa bintan resto
 // Route::get('/about', 'GuestController@about')->name('about');
-// route ke tampilan reservasi meja
-Route::get('/reservation', 'GuestController@reservation')->name('reservation');
-// route ke tampilan memilih menu setelah reservasi meja
-Route::get('/reservation/{id}', 'GuestController@menureservation')->name('choosemenu');
-// route ke tampilan detail pemesanan setelah memilih menu
-Route::get('/reservation-detail/{id}', 'GuestController@reservationdetails')->name('reservationdetail');
-Route::get('/reservation/barcode/{id}', 'GuestController@downloadbarcode')->name('downloadbarcode');
 
+#region perubahan ke HomeController agak bisa diakses authenticated user role 1 
+
+// route ke tampilan reservasi meja
+Route::get('/reservation', 'HomeController@custreservation')->name('reservation');
+// route ke tampilan memilih menu setelah reservasi meja
+Route::get('/reservation/{id}', 'HomeController@menureservation')->name('choosemenu');
+// route ke tampilan detail pemesanan setelah memilih menu
+Route::get('/reservation-detail/{id}', 'HomeController@reservationdetails')->name('reservationdetail');
+Route::get('/reservation/barcode/{id}', 'HomeController@downloadbarcode')->name('downloadbarcode');
 // fungsi input reservasi meja
-Route::post('/reserve', 'GuestController@reserve')->name('reserve');
+Route::post('/reserve', 'HomeController@reserve')->name('reserve');
 // fungsi input menu pilihan setelah reservasi meja
-Route::get('/reserve_menu', 'GuestController@reservemenu')->name('reservemenu');
+Route::get('/reserve-menu', 'HomeController@reservemenu')->name('reservemenu');
+
+Route::get('/reservations-list', 'HomeController@reservationlist')->name('reservationlist');
+Route::get('/payments-list', 'HomeController@paymentslist')->name('paymentslist');
+
+#endregion
 
 Route::post('/payments/notification', 'PaymentsController@notification')->name('paymentsnotification');
 Route::get('/payments/finish', 'PaymentsController@finish')->name('paymentsfinish');

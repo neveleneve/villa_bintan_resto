@@ -13,12 +13,14 @@
                     <h1 class="text-center text-white font-weight-bold">Reservations</h1>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-4">
-                            <input class="form-control" type="text" name="cari" id="cari" placeholder="Search..."
-                                oninput="search(this.value)">
+                    @if (Auth::user()->role == 0)
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <input class="form-control" type="text" name="cari" id="cari"
+                                    placeholder="Search..." oninput="search(this.value)">
+                            </div>
                         </div>
-                    </div>
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-bordered text-center">
                             <thead class="bg-default text-white">
@@ -96,15 +98,17 @@
                                         <td class="align-middle">
                                             <a class="btn btn-sm btn-outline-default"
                                                 href="{{ route('adminreservationdetail', ['id' => $item->codereservation]) }}">Detail</a>
-                                            @if ($item->status_code == 200 && $item->bookingstatus == 0)
-                                                <a class="btn btn-sm btn-outline-success"
-                                                    onclick="return confirm('Tandai reservasi telah selesai?')"
-                                                    href="{{ route('bookedin', ['id' => $item->codereservation]) }}">Booked
-                                                    In</a>
-                                            @elseif ($item->bookingstatus == 1)
-                                                <a class="btn btn-sm btn-outline-warning" target="__blank"
-                                                    href="{{ route('adminprintstruk', ['id' => $item->codereservation]) }}">Print
-                                                    Struk</a>
+                                            @if (Auth::user()->role == 0)
+                                                @if ($item->status_code == 200 && $item->bookingstatus == 0)
+                                                    <a class="btn btn-sm btn-outline-success"
+                                                        onclick="return confirm('Tandai reservasi telah selesai?')"
+                                                        href="{{ route('bookedin', ['id' => $item->codereservation]) }}">Booked
+                                                        In</a>
+                                                @elseif ($item->bookingstatus == 1)
+                                                    <a class="btn btn-sm btn-outline-warning" target="__blank"
+                                                        href="{{ route('adminprintstruk', ['id' => $item->codereservation]) }}">Print
+                                                        Struk</a>
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
@@ -123,25 +127,28 @@
         </div>
     </div>
 @endsection
-
-@section('custjs')
-    <script>
-        function search(key) {
-            var tabelbody = $('#tablemenu');
-            $.ajax({
-                type: 'GET',
-                url: '{{ route('adminreservationssearch') }}',
-                data: {
-                    'key': key
-                },
-                success: function(data) {
-                    tabelbody.empty();
-                    tabelbody.html(data);
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    alert(xhr.status);
-                },
-            });
-        }
-    </script>
-@endsection
+@if (Auth::user()->role == 0)
+    @section('custjs')
+        <script>
+            function search(key) {
+                var tabelbody = $('#tablemenu');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route('adminreservationssearch') }}',
+                    data: {
+                        'key': key,
+                        'role': '{{ Auth::user()->role }}',
+                        'id': '{{ Auth::user()->id }}',
+                    },
+                    success: function(data) {
+                        tabelbody.empty();
+                        tabelbody.html(data);
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status);
+                    },
+                });
+            }
+        </script>
+    @endsection
+@endif

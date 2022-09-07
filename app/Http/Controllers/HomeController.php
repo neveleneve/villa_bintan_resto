@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Menu;
 use App\MenuCategory;
 use App\Payment;
 use App\Reservation;
 use App\ReservedFee;
+use App\ReservedMenu;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use \PDF;
 
 class HomeController extends Controller
@@ -24,6 +29,8 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+    #region halaman admin
+
     /**
      * Show the application dashboard.
      *
@@ -31,19 +38,30 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $datareservasimasukhariini = Reservation::where('status', 1)
-            ->whereDate('created_at', date('Y-m-d'))
-            ->count();
-        $databookingmasukhariini = Reservation::where('status', 1)
-            ->whereDate('time', date('Y-m-d'))
-            ->count();
-        $completedreservation = Reservation::where('status', 1)
-            ->count();
-        return view('admin.home', [
-            'reservationtoday' => $datareservasimasukhariini,
-            'bookingtoday' => $databookingmasukhariini,
-            'completedreservation' => $completedreservation,
-        ]);
+        $datapass = [];
+        if (Auth::user()->role == 0) {
+            $datareservasimasukhariini = Reservation::where('status', 1)
+                ->whereDate('created_at', date('Y-m-d'))
+                ->count();
+            $databookingmasukhariini = Reservation::where('status', 1)
+                ->whereDate('time', date('Y-m-d'))
+                ->count();
+            $completedreservation = Reservation::where('status', 1)
+                ->count();
+            $datapass = [
+                'reservationtoday' => $datareservasimasukhariini,
+                'bookingtoday' => $databookingmasukhariini,
+                'completedreservation' => $completedreservation,
+            ];
+        } else {
+            $completedreservation = Reservation::where('status', 1)
+                ->where('user_id', Auth::user()->id)
+                ->count();
+            $datapass = [
+                'completedreservation' => $completedreservation,
+            ];
+        }
+        return view('admin.home', $datapass);
     }
 
     public function reservation()
@@ -417,4 +435,372 @@ class HomeController extends Controller
         }
         return $namabulan;
     }
+
+    #endregion
+
+    #region halaman customer
+
+    // tampil halaman reservasi
+    public function custreservation()
+    {
+        if (Auth::user()->role == 0) {
+            return redirect(route('home'));
+        } else {
+            return view('reservation');
+        }
+    }
+
+    // input data reservasi meja
+    public function reserve(Request $data)
+    {
+        // dd($data->all());
+        $char = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $reservation_code = Helper::RandomChar($char);
+        if (isset($data->meja)) {
+            for ($i = 0; $i < count($data->meja); $i++) {
+                $datareservasi[$i] = [
+                    'reservation_code' => $reservation_code,
+                    'user_id' => $data->user_id,
+                    'nama_pemesan' => $data->nama,
+                    'kontak' => $data->kontak,
+                    'table_id' => $data->meja[$i],
+                    'time' => $data->tanggal . ' ' . $data->waktu,
+                    'status' => 0,
+                    'reserved_status' => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ];
+            }
+            Reservation::insert($datareservasi);
+            return redirect(route('choosemenu', ['id' => $reservation_code]));
+        } else {
+            return redirect(route('reservation'))->with([
+                'alert' => 'Check your seat before making the reservation!',
+                'tanggal' => $data->tanggal,
+                'waktu' => $data->waktu,
+                'seat' => $data->seat,
+            ]);
+        }
+    }
+
+    // tampil halaman pesan menu setelah reservasi meja
+    /** note
+     * 1. sistem func memeriksa apakah id yang digunakan ada pada database
+     *      a. jika id tidak tersedia pada database, sistem akan kembali kehalaman reservasi
+     *      b. jika id tersedia pada database, sistem akan memeriksa status reservasi.
+     *          - jika status reservasi 0, sistem akan mengarahkan ke halaman pemesanan menu
+     *          - jika status reservasi 1, sistem akan mengarahkan ke halaman detail reservasi dan pembayaran
+     *          - jika status reservasi 2, sistem akan mengarahkan ke halaman nota pembayaran
+     */
+    public function menureservation($id)
+    {
+        $check = Reservation::where('reservation_code', $id)->get();
+        $statustelat = false;
+        if (count($check) == 0) {
+            return redirect(route('reservation'));
+        } else {
+            if ($check[0]->status == 0 && date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($check[0]->time . '- 2 hours'))) {
+                $statustelat = true;
+            }
+            if (count($check) == 0) {
+                return redirect(route('reservation'))->with('alert', 'Reservation code is not exist!');
+            } else {
+                if ($check[0]['status'] == 0) {
+                    $data = DB::table('menus')
+                        ->join('menu_categories', 'menus.id_category', '=', 'menu_categories.id')
+                        ->select('menus.id', 'menus.name', 'menus.price', 'menus.description', 'menu_categories.id as category_id')
+                        ->where('menus.deleted_at', null)
+                        ->orderBy('menu_categories.name')
+                        ->get();
+                    $cat = MenuCategory::orderBy('name')
+                        ->get();
+                    $jmlmenupercat = DB::select(DB::raw('SELECT c.id, COUNT( s.NAME ) AS menucount FROM menu_categories c JOIN menus s ON c.id = s.id_category GROUP BY c.id'));
+                    $datamenu = [];
+                    foreach ($jmlmenupercat as $key) {
+                        $datamenu[$key->id] = $key->menucount;
+                    }
+                    return view('choosemenu', [
+                        'data' => $data,
+                        'cat' => $cat,
+                        'jmlmenu' => $datamenu,
+                        'id' => $id,
+                        'telat' => $statustelat,
+                    ]);
+                } elseif ($check[0]['status'] == 1) {
+                    return redirect(route('reservationdetail', [
+                        'id' => $id,
+                    ]));
+                }
+            }
+        }
+    }
+
+    public function reservemenu(Request $data)
+    {
+        // dd($data->all());
+        // kode reservasi
+        $reservation_code = $data->id;
+        // data pesanan
+        $datapesan = [];
+        // hitung jumlah menu di db
+        if (isset($data->quantity)) {
+            $menudb = Menu::get()->count();
+            // hitung jumlah menu yang tampil di web
+            $jumlahmenu = $data->quantity;
+            // hitung jumlah menu yang tampil di web
+            $menu = count($data->quantity);
+            // list data menu yang dipilih pada tampilan web
+            $dataarray = array_filter($data->quantity);
+            // list data menu id
+            $datamenuid = $data->menu_id;
+            // list array key dari menu yang dipilih pada tampilan web
+            $dataarraykey = array_keys($dataarray);
+            if ($menudb == $menu) {
+                for ($i = 0; $i < count($dataarraykey); $i++) {
+                    $menudatabase = Menu::where('id', $datamenuid[$dataarraykey[$i]])->get('price');
+                    $datapesan[$i] = [
+                        'reservation_code' => $reservation_code,
+                        'menu_id' => $datamenuid[$dataarraykey[$i]],
+                        'harga' => $menudatabase[0]['price'],
+                        'jumlah' => $jumlahmenu[$dataarraykey[$i]],
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ];
+                }
+            } else {
+                return redirect(route('choosemenu', [
+                    'id' => $data->id
+                ]))->with([
+                    'alert' => 'There is an update on menu. Please re-choose your selected menu!'
+                ]);
+            }
+        }
+        $jumlahmeja = Reservation::where('reservation_code', $reservation_code)->count();
+        $tablefee = 0;
+        if ($datapesan == null) {
+            for ($i = 0; $i < $jumlahmeja; $i++) {
+                $tablefee += 50000;
+            }
+        } else {
+            $tablefee = 0;
+            ReservedMenu::insert($datapesan);
+        }
+        // dd($tablefee);
+        ReservedFee::create([
+            'reservation_code' => $reservation_code,
+            'fee' => $tablefee,
+        ]);
+        Reservation::where('reservation_code', $reservation_code)->update([
+            'status' => 1
+        ]);
+        return redirect(route('reservationdetail', ['id' => $data->id]));
+    }
+
+    public function reservationdetails($id)
+    {
+        // cek status pemesanan
+        $reservationstatus = Reservation::where('reservation_code', $id)
+            ->get(['time', 'status']);
+
+        // dd($reservationstatus);
+        if (count($reservationstatus) == 0) {
+            return redirect(route('reservation'))->with([
+                'alert' => "Reservation code doesn't exist! Please make a reservation first."
+            ]);
+        } elseif ($reservationstatus[0]['status'] == 0) {
+            return redirect(route('choosemenu', [
+                'id' => $id
+            ]));
+        } else {
+            $basedata = Reservation::join('tables', 'reservations.table_id', '=', 'tables.id')
+                ->where('reservations.reservation_code', $id)
+                ->get([
+                    'reservations.*',
+                    'tables.no_meja',
+                    'tables.kapasitas',
+                ]);
+            $tablefee = ReservedFee::where('reservation_code', $id)->get();
+            $menu = DB::table('reserved_menus')
+                ->join('menus', 'reserved_menus.menu_id', '=', 'menus.id')
+                ->select([
+                    'menus.id',
+                    'menus.name',
+                    'reserved_menus.harga',
+                    'reserved_menus.jumlah'
+                ])
+                ->where('reserved_menus.reservation_code', $id)
+                ->get();
+            // cek data pembayaran
+            $datapayment = Payment::where('reservation_code', $id)->orderBy('created_at', 'DESC')->get();
+            // $paymentUrl = null;
+            // $random = null;
+            if (date('Y-m-d H:i:s') > date('Y-m-d H:i:s', strtotime($reservationstatus[0]['time'] . '- 2 hours'))) {
+                if (count($datapayment) > 0) {
+                    $paymentUrl = $datapayment[0]['url'];
+                    $random = $datapayment[0]['order_id'];
+                } else {
+                    $paymentUrl = null;
+                    $random = null;
+                }
+            } else {
+                if ((count($datapayment) == 0) || ($datapayment[0]['status_code'] == "407")) {
+                    // random char for order_id
+                    $char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+                    $random = Helper::RandomChar($char, 9);
+                    $total = 0;
+                    $i = 0;
+                    // ekstrak data pesanan konsumen
+                    foreach ($menu as $key) {
+                        $datapesanan[$i] = [
+                            'id' => $key->id,
+                            'price' => $key->harga,
+                            'quantity' => $key->jumlah,
+                            'name' => $key->name,
+                        ];
+                        $total += $key->jumlah * $key->harga;
+                        $i++;
+                    }
+                    if (isset($datapesanan)) {
+                        $jumlahpesanan = count($datapesanan);
+                    } else {
+                        $jumlahpesanan = 0;
+                    }
+                    $datapesanan[$jumlahpesanan] = [
+                        'id' => 'TABLEFEE',
+                        'price' => $tablefee[0]['fee'],
+                        'quantity' => 1,
+                        'name' => 'Table Reservation Fee',
+                    ];
+                    $total += $tablefee[0]['fee'];
+                    // variable untuk menyimpan data pesanan dan pemesan
+                    $param = [
+                        'transaction_details' => [
+                            'order_id' => $random,
+                            'gross_amount' => $total,
+                        ],
+                        'item_details' => $datapesanan,
+                        'customer_details' => [
+                            'first_name' => $basedata[0]['nama_pemesan'],
+                            'phone' => $basedata[0]['kontak'],
+                        ]
+                    ];
+                    // mendapatkan link url pembayaran
+                    $this->initPaymentGateway();
+                    try {
+                        $paymentUrl = \Midtrans\Snap::createTransaction($param)->redirect_url;
+                    } catch (Exception $e) {
+                        echo $e->getMessage();
+                    }
+                    Payment::insert([
+                        'reservation_code' => $id,
+                        'user_id' => Auth::user()->id,
+                        'order_id' => $random,
+                        'url' => $paymentUrl,
+                        'status_code' => '404',
+                        'transaction_status' => "Transaction doesn't exist.",
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                } else {
+                    $paymentUrl = $datapayment[0]['url'];
+                    $random = $datapayment[0]['order_id'];
+                }
+            }
+            $endpoint = "https://api.sandbox.midtrans.com/v2/" . $random . "/status";
+            $client = new \GuzzleHttp\Client([
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic ' . base64_encode(env('MIDTRANS_SERVER_KEY')),
+                ]
+            ]);
+            $response = $client->request('GET', $endpoint);
+            $content = json_decode($response->getBody(), true);
+            $datapayments = Payment::where('order_id', $random)
+                ->orderBy('created_at', 'DESC')
+                ->get();
+            if (isset($content['transaction_status'])) {
+                if (count($datapayments) > 0) {
+                    if ($datapayments[0]['transaction_status'] != $content['transaction_status']) {
+                        Payment::where('order_id', $random)->update([
+                            'transaction_status' => $content['transaction_status']
+                        ]);
+                    }
+                }
+            }
+            if (count($datapayments) > 0) {
+                if ($datapayments[0]['status_code'] != $content['status_code']) {
+                    Payment::where('order_id', $random)->update([
+                        'status_code' => $content['status_code']
+                    ]);
+                }
+            }
+            return view('reservationdetail', [
+                'reservation_data' => $basedata,
+                'reservation_fee_data' => $tablefee,
+                'reservation_menu_data' => $menu,
+                'no' => 1,
+                'payments_url' => $paymentUrl,
+                'random' => $random,
+                'status_pembayaran' => $content,
+                'id' => $id,
+                'jumlahpembayaran' => count($datapayments),
+                'datapembayaran' => $datapayments,
+            ]);
+        }
+    }
+
+    public function downloadbarcode($id)
+    {
+        $file = public_path('images/scan_barcode/' . $id . '.png');
+
+        $headers = array(
+            'Content-Type: image/png',
+        );
+
+        return Response::download($file, 'Table Booking Villa Bintan Resto ' . $id . '.png', $headers);
+    }
+
+    public function reservationlist()
+    {
+        if (Auth::user()->role == 0) {
+            return redirect(route('home'));
+        } else {
+            $this->checkreservation();
+            $no = 1;
+            $datareservasi = DB::table('reservations')
+                ->select([
+                    'reservations.id AS id',
+                    'reservations.reservation_code as codereservation',
+                    'reservations.nama_pemesan AS pemesan',
+                    'reservations.time AS reservationtime',
+                    'reservations.STATUS AS reservasistatus',
+                    'reservations.reserved_status AS bookingstatus',
+                    'tables.no_meja AS nomeja',
+                    DB::raw('(SELECT COUNT( * ) FROM payments WHERE reservation_code = reservations.reservation_code) AS jumlahpembayaran'),
+                    DB::raw('(SELECT order_id FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS order_id'),
+                    DB::raw('(SELECT status_code FROM payments WHERE reservation_code = reservations.reservation_code ORDER BY created_at DESC LIMIT 1) AS status_code')
+                ])
+                ->join('tables', 'tables.id', '=', 'reservations.table_id')
+                ->orderBy('reservations.reserved_status')
+                ->orderBy('reservations.time')
+                ->orderBy('status_code')
+                ->where('reservations.user_id', Auth::user()->id)
+                ->get();
+            return view('admin.reservation', [
+                'datareservasi' => $datareservasi,
+                'no' => $no,
+            ]);
+        }
+    }
+
+    public function paymentslist()
+    {
+        $datapayment = Payment::where('user_id', Auth::user()->id)->orderBy('id', 'desc')->get();
+        $this->checkreservation();
+        return view('admin.payment', [
+            'payments' => $datapayment
+        ]);
+    }
+    #endregion
 }

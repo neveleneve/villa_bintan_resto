@@ -30,27 +30,27 @@
                 <div class="card-body">
                     <form action="{{ route('reserve') }}" method="post">
                         {{ csrf_field() }}
+                        <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
                         <div class="row mb-3">
                             <div class="col-6">
                                 <label for="nama" class="font-weight-bold">Full Name</label>
                                 <input class="form-control" type="text" name="nama" id="nama"
-                                    value="{{ Session::has('nama') ? session('nama') : null }}"
-                                    placeholder="Insert Your Full Name Here..." required>
+                                    value="{{ Auth::user()->name }}" placeholder="Insert Your Full Name Here..." required>
                             </div>
                             <div class="col-6">
                                 <label for="kontak" class="font-weight-bold">Contact</label>
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <div class="input-group-prepend">
+                                        {{-- <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">
                                                 <img class="img-thumbnail" src="{{ asset('images/icons/indonesia.png') }}"
                                                     alt="">&nbsp;
                                                 +62
                                             </span>
-                                        </div>
+                                        </div> --}}
                                         <input class="form-control" type="text" name="kontak" id="kontak"
-                                            value="{{ Session::has('kontak') ? session('kontak') : null }}"
-                                            onkeypress="validate(event)" placeholder="Insert Your Contact Here..." required>
+                                            value="{{ Auth::user()->kontak }}" onkeypress="validate(event)"
+                                            placeholder="Insert Your Contact Here..." required>
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +60,8 @@
                                 <label for="tanggal" class="font-weight-bold">Reservation Date</label>
                                 <input class="form-control" type="date" name="tanggal" id="tanggal"
                                     value="{{ Session::has('tanggal') ? session('tanggal') : date('Y-m-d', strtotime(date(now()) . '+1 days')) }}"
-                                    placeholder="Select date..." min="{{ date('Y-m-d', strtotime(date(now()) . '+1 days')) }}">
+                                    placeholder="Select date..."
+                                    min="{{ date('Y-m-d', strtotime(date(now()) . '+1 days')) }}">
                             </div>
                             <div class="col-3">
                                 <label for="waktu" class="font-weight-bold">Reservation Time</label>
@@ -211,5 +212,36 @@
                 if (theEvent.preventDefault) theEvent.preventDefault();
             }
         }
+        (function() {
+            const form = document.querySelector('#meja');
+            const checkboxes = form.querySelectorAll('input[type=checkbox]');
+            const checkboxLength = checkboxes.length;
+            const firstCheckbox = checkboxLength > 0 ? checkboxes[0] : null;
+
+            function init() {
+                if (firstCheckbox) {
+                    for (let i = 0; i < checkboxLength; i++) {
+                        checkboxes[i].addEventListener('change', checkValidity);
+                    }
+
+                    checkValidity();
+                }
+            }
+
+            function isChecked() {
+                for (let i = 0; i < checkboxLength; i++) {
+                    if (checkboxes[i].checked) return true;
+                }
+
+                return false;
+            }
+
+            function checkValidity() {
+                const errorMessage = !isChecked() ? 'At least one checkbox must be selected.' : '';
+                firstCheckbox.setCustomValidity(errorMessage);
+            }
+
+            init();
+        })();
     </script>
 @endsection

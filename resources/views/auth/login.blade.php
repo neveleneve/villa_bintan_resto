@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('title')
-    Administrator Log In
+    Log In
 @endsection
 
 @section('content')

@@ -19,6 +19,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(ReservedMenuSeeder::class);
         // $this->call(ReservedFeeSeeder::class);
         $this->call(UserSeeder::class);
-        $this->call(TableSeeder::class);
+        // $this->call(TableSeeder::class);
     }
 }

@@ -14,31 +14,50 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="card text-center">
-                                <div class="card-header bg-default text-white font-weight-bold">Today Reservation</div>
-                                <div class="card-body">
-                                    {{ $reservationtoday }} Reservation(s)
+                        @if (Auth::user()->role == 0)
+                            <div class="col-lg-4">
+                                <div class="card text-center">
+                                    <div class="card-header bg-default text-white font-weight-bold">
+                                        Pemesanan Hari Ini
+                                    </div>
+                                    <div class="card-body">
+                                        {{ $reservationtoday }} Reservation(s)
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center">
-                                <div class="card-header bg-default text-white font-weight-bold">Today's Booking Preparation
-                                </div>
-                                <div class="card-body">
-                                    {{ $bookingtoday }} Preparation(s)
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center">
-                                <div class="card-header bg-default text-white font-weight-bold">Completed Reservation</div>
-                                <div class="card-body">
-                                    {{ $completedreservation }} Reservation(s)
+                            <div class="col-lg-4">
+                                <div class="card text-center">
+                                    <div class="card-header bg-default text-white font-weight-bold">
+                                        Persiapan Pemesanan Hari Ini
+                                    </div>
+                                    <div class="card-body">
+                                        {{ $bookingtoday }} Preparation(s)
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-lg-4">
+                                <div class="card text-center">
+                                    <div class="card-header bg-default text-white font-weight-bold">
+                                        Reservasi Selesai
+                                    </div>
+                                    <div class="card-body">
+                                        {{ $completedreservation }} Reservation(s)
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="col-lg-4">
+                                <div class="card text-center">
+                                    <div class="card-header bg-default text-white font-weight-bold">
+                                        Jumlah Transaksi Reservasi Kamu
+                                    </div>
+                                    <div class="card-body">
+                                        {{ $completedreservation }}
+                                        Reservation(s)
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

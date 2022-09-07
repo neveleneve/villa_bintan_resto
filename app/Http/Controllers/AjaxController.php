@@ -28,7 +28,7 @@ class AjaxController extends Controller
         }
         foreach ($tabeldata as $key) {
             $data .= '<tr><td>' . $no . '</td><td>Nomor ' . $key->no_meja . '</td><td>' . $key->kapasitas
-                . '</td><td><div class="form-check"><label class=form-check-label for=meja' . $key->id . '><input class=form-check-input type=radio name=meja id=meja' . $key->id . ' value=' . $key->id . ' required>&nbsp;Pilih Meja</label></div></td></tr>';
+                . '</td><td><div class="form-check"><label class=form-check-label for=meja' . $key->id . '><input class=form-check-input type=checkbox name=meja[] id=meja' . $key->id . ' value=' . $key->id . ' >&nbsp;Pilih Meja</label></div></td></tr>';
             $no++;
         }
         return Response($data);
