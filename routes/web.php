@@ -46,7 +46,9 @@ Route::get('/payment/status/{id}', 'HomeController@paymentstatus')->name('paymen
 Route::get('/table-check', 'AjaxController@tablecheck')->name('tableCheck');
 Route::get('/check-reservation', 'AjaxController@reservationcheck')->name('reservationcheck');
 
-Auth::routes();
+Auth::routes([
+    'reset' => false
+]);
 
 Route::get('/dashboard', 'HomeController@index')->name('home');
 

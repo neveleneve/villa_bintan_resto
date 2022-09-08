@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="jumbotron rounded-0" style="background-image: url('{{ asset('images/home_bg.jpg') }}'); height: 90vh;">
-        <h1 class="h1 font-weight-bold text-white text-center">BIIE Villa Restaurant Lobam</h1>
+        <h1 class="h1 font-weight-bold text-white text-center">Bintan Inti Executive Village Restaurant Lobam</h1>
         <h3 class="h2 font-weight-bold text-white text-center">Making People Happy</h3>
         <div class="row justify-content-center">
             <div class="col-8">

@@ -62,13 +62,15 @@
                                     value="{{ Session::has('tanggal') ? session('tanggal') : date('Y-m-d', strtotime(date(now()) . '+1 days')) }}"
                                     placeholder="Select date..."
                                     min="{{ date('Y-m-d', strtotime(date(now()) . '+1 days')) }}">
+                                <span class="text-red font-weight-bold">* Tanggal pemesanan H-1</span>
                             </div>
                             <div class="col-3">
                                 <label for="waktu" class="font-weight-bold">Reservation Time</label>
                                 <input class="form-control" type="time" name="waktu" id="waktu"
                                     placeholder="Select time..."
                                     value="{{ Session::has('waktu') ? session('waktu') : '13:00' }}" min="13:00"
-                                    max="22:30" step="1800">
+                                    max="22:00" step="1800">
+                                <span class="text-red font-weight-bold">* Waktu reservasi 13:00 - 22:00</span>
                             </div>
                             <div class="col-3">
                                 <label for="seat" class="font-weight-bold">Capacity</label>

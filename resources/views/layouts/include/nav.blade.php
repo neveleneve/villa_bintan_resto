@@ -1,8 +1,8 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-default shadow-sm" id="navbar-user">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('dashboard') }}">
-            <img src="{{ asset('argon/assets/img/brand/favicon.png') }}" height="30" alt="">
-            BIIE Villa Restaurant Lobam
+        <a class="navbar-brand font-weight-bold" href="{{ route('dashboard') }}">
+            <img src="{{ asset('argon/assets/img/brand/brand-light.png') }}" height="30" alt="">
+            BIEV Restaurant
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">

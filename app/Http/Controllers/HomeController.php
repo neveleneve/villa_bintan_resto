@@ -56,7 +56,12 @@ class HomeController extends Controller
         } else {
             $completedreservation = Reservation::where('status', 1)
                 ->where('user_id', Auth::user()->id)
-                ->count();
+                ->groupBy('reservation_code')
+                ->get([
+                    '*',
+                    DB::raw('count(*) as jumlahtrx')
+                ])->count();
+            // dd($completedreservation);
             $datapass = [
                 'completedreservation' => $completedreservation,
             ];
@@ -344,7 +349,7 @@ class HomeController extends Controller
         WHERE
             YEAR ( time ) = "' . $req->tahun . '"
             AND MONTH ( time ) = "' . $req->bulan . '"
-        ORDER BY time');
+        GROUP BY reservation_code ORDER BY time');
         $pdf = PDF::loadView('admin.reportpreview', [
             'data' => $datareservasi,
             'tahun' => $req->tahun,

@@ -40,7 +40,7 @@
                                     <tr>
                                         <td>
                                             <a class="text-dark"
-                                                href="{{ route('adminreservationdetail', ['id' => $item->reservation_code]) }}">
+                                                href="{{ Auth::user()->role == 0 ? route('adminreservationdetail', ['id' => $item->reservation_code]) : route('reservationdetail', ['id' => $item->reservation_code]) }}">
                                                 <u>
                                                     {{ $item->reservation_code }}
                                                 </u>
